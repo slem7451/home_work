@@ -28,10 +28,11 @@ func Unpack(str string) (string, error) {
 
 					digit, _ := strconv.Atoi(string(strRune[i+2]))
 					res.WriteString(strings.Repeat(string(strRune[i+1]), digit))
+					i += 2
 				} else {
 					res.WriteString(string(strRune[i+1]))
+					i++
 				}
-				i += 2
 			} else {
 				return "", ErrInvalidString
 			}

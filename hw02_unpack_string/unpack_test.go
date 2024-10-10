@@ -39,7 +39,7 @@ func TestUnpack(t *testing.T) {
 }
 
 func TestUnpackInvalidString(t *testing.T) {
-	invalidStrings := []string{"3abc", "45", "aaa10b", "a\n124", `q\we`}
+	invalidStrings := []string{"3abc", "45", "aaa10b", "a\n124", `q\we`, `q\\\\\\33`}
 	for _, tc := range invalidStrings {
 		tc := tc //nolint:copyloopvar
 		t.Run(tc, func(t *testing.T) {
