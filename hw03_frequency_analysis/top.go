@@ -1,12 +1,11 @@
 package hw03frequencyanalysis
 
 import (
+	"container/heap"
 	"regexp"
 	"slices"
 	"strings"
 	"unicode/utf8"
-
-	"github.com/biningo/bstree" //nolint:depguard
 )
 
 type Word struct {
@@ -14,30 +13,41 @@ type Word struct {
 	frequency int
 }
 
-var regex = regexp.MustCompile(`[\p{L}\d_]+`)
+type WordHeap []Word
 
-func treeComp(a, b interface{}) int {
-	ia, ib := a.(Word), b.(Word)
+func (h WordHeap) Len() int { 
+	return len(h) 
+}
 
-	if ia.word == ib.word {
-		return 0
-	}
-
-	dis := ia.frequency - ib.frequency
+func (h WordHeap) Less(i, j int) bool {
+	dis := h[i].frequency - h[j].frequency
 
 	if dis == 0 {
-		words := []string{ia.word, ib.word}
+		words := []string{h[i].word, h[j].word}
 		slices.Sort(words)
-
-		if words[0] == ia.word {
-			return 1
-		}
-
-		return -1
+		return words[0] == h[i].word
 	}
 
-	return dis
+	return dis > 0
 }
+
+func (h WordHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+
+func (h *WordHeap) Push(x any) {
+	*h = append(*h, x.(Word))
+}
+
+func (h *WordHeap) Pop() any {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+var regex = regexp.MustCompile(`[\p{L}\d_]+`)
 
 func Top10(text string) []string {
 	words := strings.Fields(text)
@@ -58,17 +68,17 @@ func Top10(text string) []string {
 		}
 	}
 
-	tree := bstree.NewBSTree(treeComp)
+	h := &WordHeap{}
+	heap.Init(h)
 
 	for k, v := range dict {
-		tree.Set(Word{word: k, frequency: v})
+		heap.Push(h, Word{word: k, frequency: v})
 	}
 
 	res := make([]string, 0)
-	for len(res) < 10 && tree.Len() != 0 {
-		word := tree.Max().(Word)
-		res = append(res, word.word)
-		tree.Del(word)
+	for len(res) < 10 && h.Len() != 0 {
+		word := heap.Pop(h)
+		res = append(res, word.(Word).word)
 	}
 
 	return res

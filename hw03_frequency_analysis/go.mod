@@ -2,10 +2,7 @@ module github.com/slem7451/home_work/hw03_frequency_analysis
 
 go 1.23
 
-require (
-	github.com/biningo/bstree v0.0.0-20201218101537-a9bda301e827
-	github.com/stretchr/testify v1.7.0
-)
+require github.com/stretchr/testify v1.7.0
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
