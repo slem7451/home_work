@@ -15,8 +15,8 @@ type Word struct {
 
 type WordHeap []Word
 
-func (h WordHeap) Len() int { 
-	return len(h) 
+func (h WordHeap) Len() int {
+	return len(h)
 }
 
 func (h WordHeap) Less(i, j int) bool {
