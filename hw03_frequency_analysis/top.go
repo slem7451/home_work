@@ -54,10 +54,8 @@ func Top10(text string) []string {
 	dict := make(map[string]int)
 
 	for i := range words {
-		if !regex.MatchString(words[i]) {
-			if utf8.RuneCountInString(words[i]) > 1 {
-				dict[words[i]]++
-			}
+		if !regex.MatchString(words[i]) && utf8.RuneCountInString(words[i]) > 1 {
+			dict[words[i]]++
 			continue
 		}
 

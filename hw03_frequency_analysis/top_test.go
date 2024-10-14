@@ -94,6 +94,11 @@ func TestTop10(t *testing.T) {
 			expected: []string{"а", "б", "в", "г", "д", "е", "ж", "з", "и", "й"},
 			test:     "ru alphabet",
 		},
+		{
+			text:     `😎 🤪😷 😇`,
+			expected: []string{"😇", "😎", "🤪😷"},
+			test:     "emoji",
+		},
 	}
 
 	for _, test := range tests {
