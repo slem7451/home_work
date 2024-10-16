@@ -3,13 +3,21 @@ package hw03frequencyanalysis
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/require" //nolint:depguard
 )
 
-// Change to true if needed.
-var taskWithAsteriskIsCompleted = false
+func TestTop10(t *testing.T) {
+	t.Run("no words in empty string", func(t *testing.T) {
+		require.Len(t, Top10(""), 0)
+	})
 
-var text = `Как видите, он  спускается  по  лестнице  вслед  за  своим
+	tests := []struct {
+		text     string
+		expected []string
+		test     string
+	}{
+		{
+			text: `Как видите, он  спускается  по  лестнице  вслед  за  своим
 	другом   Кристофером   Робином,   головой   вниз,  пересчитывая
 	ступеньки собственным затылком:  бум-бум-бум.  Другого  способа
 	сходить  с  лестницы  он  пока  не  знает.  Иногда ему, правда,
@@ -41,42 +49,61 @@ var text = `Как видите, он  спускается  по  лестни�
 		Иногда Винни-Пух любит вечерком во что-нибудь поиграть,  а
 	иногда,  особенно  когда  папа  дома,  он больше любит тихонько
 	посидеть у огня и послушать какую-нибудь интересную сказку.
-		В этот вечер...`
+		В этот вечер...`,
+			expected: []string{
+				"а",
+				"он",
+				"и",
+				"ты",
+				"что",
+				"в",
+				"его",
+				"если",
+				"кристофер",
+				"не",
+			},
+			test: "original",
+		},
+		{
+			text: `cat and dog, one dog,two cats and one man
+					нога! нога нога,  'нога'  Нога
+					какой-то какойто -
+					dog,cat dog...cat dogcat - ------------ abcde --
+					-------
+					-
 
-func TestTop10(t *testing.T) {
-	t.Run("no words in empty string", func(t *testing.T) {
-		require.Len(t, Top10(""), 0)
-	})
+					'cat' "dog" "dog' cat+dog=catdog+ cat* dog\ cat= cat- 
 
-	t.Run("positive test", func(t *testing.T) {
-		if taskWithAsteriskIsCompleted {
-			expected := []string{
-				"а",         // 8
-				"он",        // 8
-				"и",         // 6
-				"ты",        // 5
-				"что",       // 5
-				"в",         // 4
-				"его",       // 4
-				"если",      // 4
-				"кристофер", // 4
-				"не",        // 4
-			}
-			require.Equal(t, expected, Top10(text))
-		} else {
-			expected := []string{
-				"он",        // 8
-				"а",         // 6
-				"и",         // 6
-				"ты",        // 5
-				"что",       // 5
-				"-",         // 4
-				"Кристофер", // 4
-				"если",      // 4
-				"не",        // 4
-				"то",        // 4
-			}
-			require.Equal(t, expected, Top10(text))
-		}
-	})
+					cat and dog, one dog,two cats and one man`,
+			expected: []string{
+				"cat",
+				"dog",
+				"нога",
+				"and",
+				"one",
+				"cats",
+				"dog,two",
+				"man",
+				"--",
+				"-------",
+			},
+			test: "ru+en with punctuations",
+		},
+		{
+			text:     `а б в г д е ж з и й к л м н о п р с т у ф х ц ч ш щ ь ы ъ э ю я`,
+			expected: []string{"а", "б", "в", "г", "д", "е", "ж", "з", "и", "й"},
+			test:     "ru alphabet",
+		},
+		{
+			text:     `😎 🤪😷 😇`,
+			expected: []string{"😇", "😎", "🤪😷"},
+			test:     "emoji",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.test, func(t *testing.T) {
+			require.Equal(t, test.expected, Top10(test.text))
+		})
+	}
 }
