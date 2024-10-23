@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/require" //nolint:depguard
 )
 
 func TestCache(t *testing.T) {
@@ -78,13 +78,13 @@ func TestCache(t *testing.T) {
 		require.Equal(t, 1, val)
 
 		for i := 0; i < 3; i++ {
-			c.Set(Key(strconv.Itoa(i + 2)), i + 2)
+			c.Set(Key(strconv.Itoa(i+2)), i+2)
 		}
 
 		for i := 0; i < 3; i++ {
 			val, ok := c.Get(Key(strconv.Itoa(i + 2)))
 			require.True(t, ok)
-			require.Equal(t, i + 2, val)
+			require.Equal(t, i+2, val)
 		}
 
 		val, ok = c.Get("1")
@@ -100,7 +100,7 @@ func TestCache(t *testing.T) {
 		for i := 0; i < 3; i++ {
 			c.Get(Key(strconv.Itoa(i % 2)))
 		}
-		
+
 		c.Set("0", 13)
 
 		val, ok = c.Get("0")
@@ -115,7 +115,7 @@ func TestCache(t *testing.T) {
 	})
 }
 
-func TestCacheMultithreading(t *testing.T) {
+func TestCacheMultithreading(_ *testing.T) {
 	c := NewCache(10)
 	wg := &sync.WaitGroup{}
 	wg.Add(2)

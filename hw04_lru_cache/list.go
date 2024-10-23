@@ -18,23 +18,23 @@ type ListItem struct {
 
 type list struct {
 	length int
-	head *ListItem
-	tail *ListItem
+	head   *ListItem
+	tail   *ListItem
 }
 
-func (l *list)Len() int {
+func (l *list) Len() int {
 	return l.length
 }
 
-func (l *list)Front() *ListItem {
+func (l *list) Front() *ListItem {
 	return l.head
 }
 
-func (l *list)Back() *ListItem {
+func (l *list) Back() *ListItem {
 	return l.tail
 }
 
-func (l *list)PushFront(v interface{}) *ListItem {
+func (l *list) PushFront(v interface{}) *ListItem {
 	li := &ListItem{Value: v}
 	l.length++
 
@@ -50,7 +50,7 @@ func (l *list)PushFront(v interface{}) *ListItem {
 	return li
 }
 
-func (l *list)PushBack(v interface{}) *ListItem {
+func (l *list) PushBack(v interface{}) *ListItem {
 	li := &ListItem{Value: v}
 	l.length++
 
@@ -66,7 +66,7 @@ func (l *list)PushBack(v interface{}) *ListItem {
 	return li
 }
 
-func (l *list)Remove(li *ListItem) {
+func (l *list) Remove(li *ListItem) {
 	if l.length == 0 {
 		return
 	}
@@ -87,7 +87,7 @@ func (l *list)Remove(li *ListItem) {
 	}
 }
 
-func (l *list)MoveToFront(li *ListItem) {
+func (l *list) MoveToFront(li *ListItem) {
 	if l.length == 0 {
 		return
 	}

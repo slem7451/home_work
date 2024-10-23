@@ -7,7 +7,7 @@ import (
 type Key string
 
 type listValue struct {
-	key Key
+	key   Key
 	value interface{}
 }
 
