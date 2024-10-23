@@ -50,13 +50,72 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+		c := NewCache(10)
+
+		for i := 0; i < 10; i++ {
+			c.Set(Key(strconv.Itoa(i)), i)
+		}
+
+		val, ok := c.Get("9")
+		require.True(t, ok)
+		require.Equal(t, 9, val)
+
+		c.Clear()
+
+		for i := 0; i < 10; i++ {
+			val, ok := c.Get(Key(strconv.Itoa(i)))
+			require.False(t, ok)
+			require.Nil(t, val)
+		}
+	})
+
+	t.Run("extra tests", func(t *testing.T) {
+		c := NewCache(3)
+
+		c.Set("1", 1)
+		val, ok := c.Get("1")
+		require.True(t, ok)
+		require.Equal(t, 1, val)
+
+		for i := 0; i < 3; i++ {
+			c.Set(Key(strconv.Itoa(i + 2)), i + 2)
+		}
+
+		for i := 0; i < 3; i++ {
+			val, ok := c.Get(Key(strconv.Itoa(i + 2)))
+			require.True(t, ok)
+			require.Equal(t, i + 2, val)
+		}
+
+		val, ok = c.Get("1")
+		require.False(t, ok)
+		require.Nil(t, val)
+
+		c.Clear()
+
+		for i := 0; i < 3; i++ {
+			c.Set(Key(strconv.Itoa(i)), i)
+		}
+
+		for i := 0; i < 3; i++ {
+			c.Get(Key(strconv.Itoa(i % 2)))
+		}
+		
+		c.Set("0", 13)
+
+		val, ok = c.Get("0")
+		require.True(t, ok)
+		require.Equal(t, 13, val)
+
+		c.Set("4", 4)
+
+		val, ok = c.Get("1")
+		require.False(t, ok)
+		require.Nil(t, val)
 	})
 }
 
 func TestCacheMultithreading(t *testing.T) {
-	t.Skip() // Remove me if task with asterisk completed.
-
 	c := NewCache(10)
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
