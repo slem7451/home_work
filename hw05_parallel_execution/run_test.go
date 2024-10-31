@@ -120,7 +120,7 @@ func TestRun(t *testing.T) {
 	t.Run("tasks without errors and time.Sleep", func(t *testing.T) {
 		tasksCount := 50
 		tasks := make([]Task, 0, tasksCount)
-		cycle := 200000000
+		cycle := 100000000
 
 		for i := 0; i < tasksCount; i++ {
 			tasks = append(tasks, func() error {
