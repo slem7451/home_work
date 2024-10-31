@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/require" //nolint:depguard
 	"go.uber.org/goleak"
 )
 
@@ -124,7 +124,8 @@ func TestRun(t *testing.T) {
 
 		for i := 0; i < tasksCount; i++ {
 			tasks = append(tasks, func() error {
-				for i := 0; i < cycle; i++ {}
+				for i := 0; i < cycle; i++ { //nolint:revive
+				}
 				return nil
 			})
 		}
@@ -132,18 +133,18 @@ func TestRun(t *testing.T) {
 		workersCount := 5
 		maxErrorsCount := 1
 
-		
 		require.Eventually(t, func() bool {
 			Run(tasks, workersCount, maxErrorsCount)
 			return true
-		}, time.Second, time.Millisecond * 100)
+		}, time.Second, time.Millisecond*100)
 
 		tasksCount = 10
 		tasks = make([]Task, 0, tasksCount)
 
 		for i := 0; i < tasksCount; i++ {
 			tasks = append(tasks, func() error {
-				for i := 0; i < cycle; i++ {}
+				for i := 0; i < cycle; i++ { //nolint:revive
+				}
 				return nil
 			})
 		}
@@ -154,6 +155,6 @@ func TestRun(t *testing.T) {
 		require.Eventually(t, func() bool {
 			Run(tasks, workersCount, maxErrorsCount)
 			return true
-		}, time.Second, time.Millisecond * 100)
+		}, time.Second, time.Millisecond*100)
 	})
 }

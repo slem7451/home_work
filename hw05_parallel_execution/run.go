@@ -51,7 +51,7 @@ func run(taskCh <-chan Task, errorCount *int, m int, wg *sync.WaitGroup, mu *syn
 		}
 		mu.Unlock()
 
-		task, ok := <- taskCh
+		task, ok := <-taskCh
 		if !ok {
 			return
 		}
