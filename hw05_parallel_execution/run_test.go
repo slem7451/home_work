@@ -36,11 +36,13 @@ func TestRun(t *testing.T) {
 
 		require.Truef(t, errors.Is(err, ErrErrorsLimitExceeded), "actual err - %v", err)
 		require.LessOrEqual(t, runTasksCount, int32(workersCount+maxErrorsCount), "extra tasks were started")
+	})
 
-		tasksCount = 10
-		tasks = make([]Task, 0, tasksCount)
+	t.Run("if were errors in first M tasks, than finished not more N+M tasks #2", func(t *testing.T) {
+		tasksCount := 10
+		tasks := make([]Task, 0, tasksCount)
 
-		runTasksCount = 0
+		var runTasksCount int32
 
 		for i := 0; i < tasksCount; i++ {
 			err := fmt.Errorf("error from task %d", i)
@@ -51,9 +53,9 @@ func TestRun(t *testing.T) {
 			})
 		}
 
-		workersCount = 12
-		maxErrorsCount = 6
-		err = Run(tasks, workersCount, maxErrorsCount)
+		workersCount := 12
+		maxErrorsCount := 6
+		err := Run(tasks, workersCount, maxErrorsCount)
 
 		require.Truef(t, errors.Is(err, ErrErrorsLimitExceeded), "actual err - %v", err)
 		require.LessOrEqual(t, runTasksCount, int32(workersCount+maxErrorsCount), "extra tasks were started")
@@ -87,12 +89,14 @@ func TestRun(t *testing.T) {
 
 		require.Equal(t, runTasksCount, int32(tasksCount), "not all tasks were completed")
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
+	})
 
-		tasksCount = 10
-		tasks = make([]Task, 0, tasksCount)
+	t.Run("tasks without errors #2", func(t *testing.T) {
+		tasksCount := 10
+		tasks := make([]Task, 0, tasksCount)
 
-		runTasksCount = 0
-		sumTime = 0
+		var runTasksCount int32
+		var sumTime time.Duration
 
 		for i := 0; i < tasksCount; i++ {
 			taskSleep := time.Millisecond * time.Duration(rand.Intn(100))
@@ -105,12 +109,12 @@ func TestRun(t *testing.T) {
 			})
 		}
 
-		workersCount = 12
-		maxErrorsCount = 1
+		workersCount := 12
+		maxErrorsCount := 1
 
-		start = time.Now()
-		err = Run(tasks, workersCount, maxErrorsCount)
-		elapsedTime = time.Since(start)
+		start := time.Now()
+		err := Run(tasks, workersCount, maxErrorsCount)
+		elapsedTime := time.Since(start)
 		require.NoError(t, err)
 
 		require.Equal(t, runTasksCount, int32(tasksCount), "not all tasks were completed")
