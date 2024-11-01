@@ -24,8 +24,7 @@ func Run(tasks []Task, n, m int) error {
 		mu.Lock()
 		if errorCount >= m {
 			mu.Unlock()
-			close(taskCh)
-			return ErrErrorsLimitExceeded
+			break
 		}
 		mu.Unlock()
 		taskCh <- t
