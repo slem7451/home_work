@@ -13,7 +13,9 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	go func() {
 		defer func() {
 			close(out)
-			for range in {}
+			for range in {
+				continue
+			}
 		}()
 
 		if in == nil || len(stages) == 0 {
@@ -34,10 +36,10 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 			case <-done:
 				return
 			default:
-				select{
+				select {
 				case <-done:
 					return
-				case v, ok := <- in:
+				case v, ok := <-in:
 					if !ok {
 						return
 					}
