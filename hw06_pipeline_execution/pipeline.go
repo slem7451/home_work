@@ -42,7 +42,7 @@ func runStage(in In, done In) Out {
 					return
 				}
 
-				select{
+				select {
 				case <-done:
 					return
 				case out <- v:
