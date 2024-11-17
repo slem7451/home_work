@@ -5,11 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/require" //nolint:depguard
 )
 
 func TestCopy(t *testing.T) {
-
 	from := "testdata/input.txt"
 	to := "out.txt"
 

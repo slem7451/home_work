@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/cheggaaa/pb"
+	"github.com/cheggaaa/pb" //nolint:depguard
 )
 
 var (
@@ -35,7 +35,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		return ErrOffsetExceedsFileSize
 	}
 
-	if limit == 0 || limit > size - offset {
+	if limit == 0 || limit > size-offset {
 		limit = size - offset
 	}
 
@@ -53,7 +53,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 	_, err = io.CopyN(fileTo, reader, limit)
 	bar.Finish()
-	if err != nil && err != io.EOF {
+	if err != nil && errors.Is(err, io.EOF) {
 		return err
 	}
 
