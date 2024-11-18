@@ -14,6 +14,16 @@ var (
 )
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
+	if fromPath == toPath {
+		tmpPath := toPath + "_copy"
+		err := os.Rename(fromPath, tmpPath)
+		if err != nil {
+			return err
+		}
+		fromPath = tmpPath
+		defer os.Remove(fromPath)
+	}
+
 	fileFrom, err := os.OpenFile(fromPath, os.O_RDONLY, 0)
 	if err != nil {
 		return err
@@ -26,10 +36,6 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 
 	size := fileFromStats.Size()
-
-	if size < 0 {
-		return ErrUnsupportedFile
-	}
 
 	if size < offset {
 		return ErrOffsetExceedsFileSize

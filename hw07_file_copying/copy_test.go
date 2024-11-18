@@ -54,4 +54,24 @@ func TestCopy(t *testing.T) {
 		err := Copy(from, to, 100000000, 0)
 		require.EqualError(t, err, ErrOffsetExceedsFileSize.Error())
 	})
+
+	t.Run("from and to the same", func(t *testing.T) {
+		path := "test.txt"
+
+		file, err := os.Create(path)
+		require.NoError(t, err)
+
+		file.Write([]byte("testtesttesttesttesttest"))
+		file.Close()
+
+		err = Copy(path, path, 4, 4)
+		require.NoError(t, err)
+
+		out, err := os.ReadFile(path)
+		require.NoError(t, err)
+
+		require.True(t, bytes.Equal([]byte("test"), out))
+
+		os.Remove(path)
+	})
 }
