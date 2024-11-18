@@ -14,7 +14,14 @@ var (
 )
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
-	if fromPath == toPath {
+	fileFromStats, err := os.Stat(fromPath)
+	if err != nil {
+		return err
+	}
+
+	fileToStats, err := os.Stat(toPath)
+
+	if err == nil && os.SameFile(fileFromStats, fileToStats) {
 		tmpPath := toPath + "_copy"
 		err := os.Rename(fromPath, tmpPath)
 		if err != nil {
@@ -29,11 +36,6 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		return err
 	}
 	defer fileFrom.Close()
-
-	fileFromStats, err := fileFrom.Stat()
-	if err != nil {
-		return err
-	}
 
 	size := fileFromStats.Size()
 
