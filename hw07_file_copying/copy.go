@@ -39,7 +39,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 	size := fileFromStats.Size()
 
-	if size == 0 && (fileFromStats.Mode()&os.ModeDevice) != 0 {
+	if !fileFromStats.Mode().IsRegular() {
 		return ErrUnsupportedFile
 	}
 
