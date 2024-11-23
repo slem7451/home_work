@@ -27,7 +27,7 @@ func TestReadDir(t *testing.T) {
 	})
 
 	t.Run("success envdir read", func(t *testing.T) {
-		err := os.Mkdir("env", 0)
+		err := os.Mkdir("env", 0o666)
 		require.NoError(t, err)
 
 		createEnv := map[string]string{
@@ -68,7 +68,7 @@ func TestReadDir(t *testing.T) {
 	})
 
 	t.Run("success empty envdir read", func(t *testing.T) {
-		err := os.Mkdir("env", 0)
+		err := os.Mkdir("env", 0o666)
 		require.NoError(t, err)
 
 		env, err := ReadDir("./env")
@@ -80,7 +80,7 @@ func TestReadDir(t *testing.T) {
 	})
 
 	t.Run("error file env name", func(t *testing.T) {
-		err := os.Mkdir("env", 0)
+		err := os.Mkdir("env", 0o666)
 		require.NoError(t, err)
 
 		file, err := os.Create("./env/WRO=NG")
