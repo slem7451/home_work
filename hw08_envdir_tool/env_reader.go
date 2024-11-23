@@ -47,7 +47,7 @@ func ReadDir(dir string) (Environment, error) {
 		envVal, _, err := reader.ReadLine()
 		file.Close()
 
-		if err != io.EOF && err != nil {
+		if !errors.Is(err, io.EOF) && err != nil {
 			return nil, err
 		}
 

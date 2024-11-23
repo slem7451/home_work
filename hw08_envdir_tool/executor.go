@@ -2,16 +2,16 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"slices"
 	"strings"
-	"fmt"
 )
 
 // RunCmd runs a command + arguments (cmd) with environment variables from env.
 func RunCmd(cmd []string, env Environment) (returnCode int) {
-	command := exec.Command(cmd[0], cmd[1:]...)
+	command := exec.Command(cmd[0], cmd[1:]...) //nolint:gosec
 
 	command.Stdout = os.Stdout
 	command.Stdin = os.Stdin
@@ -22,14 +22,14 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	for k, v := range env {
 		if v.NeedRemove {
 			idx := slices.IndexFunc(command.Env, func(item string) bool {
-				return strings.HasPrefix(item, k + "=")
+				return strings.HasPrefix(item, k+"=")
 			})
 
 			if idx > 0 {
 				command.Env = append(command.Env[:idx], command.Env[idx+1:]...)
 			}
 		} else {
-			command.Env = append(command.Env, k + "=" + v.Value)
+			command.Env = append(command.Env, k+"="+v.Value)
 		}
 	}
 

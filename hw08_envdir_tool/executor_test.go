@@ -18,7 +18,7 @@ func TestRunCmd(t *testing.T) {
 		code := RunCmd([]string{"ls"}, env)
 		require.Equal(t, 0, code)
 	})
-	
+
 	t.Run("error exec with empty env", func(t *testing.T) {
 		code := RunCmd([]string{"cd"}, make(Environment))
 		require.Equal(t, 1, code)
