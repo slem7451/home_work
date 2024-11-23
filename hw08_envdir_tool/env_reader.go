@@ -54,7 +54,6 @@ func ReadDir(dir string) (Environment, error) {
 		envString := string(envVal)
 
 		envString = strings.ReplaceAll(envString, "\x00", "\n")
-		envString, _ = strings.CutSuffix(envString, "\n")
 		envString = strings.TrimRight(envString, "\t ")
 
 		env[v.Name()] = EnvValue{Value: envString, NeedRemove: len(envString) == 0}
