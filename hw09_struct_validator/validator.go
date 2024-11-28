@@ -11,16 +11,22 @@ import (
 	"unicode/utf8"
 )
 
-var ErrNotStruct = errors.New("value is not struct")
-var ErrInvalidTag = errors.New("invalid validate tag")
+var (
+	ErrNotStruct  = errors.New("value is not struct")
+	ErrInvalidTag = errors.New("invalid validate tag")
+)
 
 var ErrNotInSeq = errors.New("value not in sequency")
 
-var ErrTooBigInt = errors.New("value is bigger than max")
-var ErrTooSmallInt = errors.New("value is smaller than min")
+var (
+	ErrTooBigInt   = errors.New("value is bigger than max")
+	ErrTooSmallInt = errors.New("value is smaller than min")
+)
 
-var ErrTooBigString = errors.New("string length is bigger than max length")
-var ErrInvalidByRegexString = errors.New("string doesn't match with regex")
+var (
+	ErrTooBigString         = errors.New("string length is bigger than max length")
+	ErrInvalidByRegexString = errors.New("string doesn't match with regex")
+)
 
 type ValidationError struct {
 	Field string
@@ -70,7 +76,7 @@ func joinErrors(ve *ValidationErrors, err error, field reflect.StructField) {
 }
 
 func validateValue(value reflect.Value, ve *ValidationErrors, field reflect.StructField) error {
-	switch value.Kind() {
+	switch value.Kind() { //nolint:exhaustive
 	case reflect.Int:
 		err := validateInt(int(value.Int()), ve, field)
 		if err != nil {

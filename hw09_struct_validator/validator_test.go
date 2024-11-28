@@ -41,9 +41,9 @@ type (
 	}
 
 	TestStruct struct {
-		Ints []int `validate:"in:10,20,30"`
+		Ints  []int `validate:"in:10,20,30"`
 		Ints2 []int `validate:"max:100"`
-		int3 int `validate:"min:1000"`
+		int3  int   `validate:"min:1000"`
 	}
 
 	WrongTestStructTag struct {
@@ -75,9 +75,9 @@ type (
 	}
 
 	AppResponseUser struct {
-		A App `validate:"nested"`
+		A App      `validate:"nested"`
 		R Response `validate:"nested"`
-		U User `validate:"nested"`
+		U User     `validate:"nested"`
 	}
 
 	AppResponse struct {
@@ -86,7 +86,7 @@ type (
 	}
 
 	WrongComposeStruct struct {
-		W WrongTestStructTagName `validate:"nested"`
+		W  WrongTestStructTagName   `validate:"nested"`
 		W2 WrongTestStructTagValue2 `validate:"nested"`
 	}
 )
@@ -116,46 +116,46 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			User{
-				ID: "123456789",
-				Name: "test1",
-				Age: 18,
-				Email: "example@test.com",
-				Role: "admin",
+				ID:     "123456789",
+				Name:   "test1",
+				Age:    18,
+				Email:  "example@test.com",
+				Role:   "admin",
 				Phones: []string{"88009997755", "8800999775", "880099977"},
 			},
 			nil,
 		},
 		{
 			User{
-				ID: "12345678",
-				Name: "test2",
-				Age: 50,
-				Email: "example2@test.com",
-				Role: "admin",
+				ID:     "12345678",
+				Name:   "test2",
+				Age:    50,
+				Email:  "example2@test.com",
+				Role:   "admin",
 				Phones: []string{"88009997755", "8800999775"},
 			},
 			nil,
 		},
 		{
 			User{
-				ID: "1234567890",
-				Age: 36,
-				Email: "example3@test.com",
-				Role: "stuff",
+				ID:     "1234567890",
+				Age:    36,
+				Email:  "example3@test.com",
+				Role:   "stuff",
 				Phones: []string{"88009997755"},
 			},
 			nil,
 		},
 		{
 			TestStruct{
-				Ints: []int{10, 20, 30},
+				Ints:  []int{10, 20, 30},
 				Ints2: []int{1, 100, 0, 50},
-				int3: 10,
+				int3:  10,
 			},
 			nil,
 		},
 		{
-			AppResponseUser {
+			AppResponseUser{
 				A: App{
 					Version: "12345",
 				},
@@ -163,17 +163,17 @@ func TestValidate(t *testing.T) {
 					Code: 200,
 				},
 				U: User{
-					ID: "1234567890",
-					Age: 36,
-					Email: "example3@test.com",
-					Role: "stuff",
+					ID:     "1234567890",
+					Age:    36,
+					Email:  "example3@test.com",
+					Role:   "stuff",
 					Phones: []string{"88009997755"},
 				},
 			},
 			nil,
 		},
 		{
-			AppResponse {
+			AppResponse{
 				A: App{
 					Version: "123456",
 				},
@@ -189,7 +189,7 @@ func TestValidate(t *testing.T) {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
 			tt := tt
 			t.Parallel()
-			
+
 			require.ErrorIs(t, Validate(tt.in), tt.expectedErr)
 			_ = tt
 		})
@@ -219,11 +219,11 @@ func TestIncorrectValidate(t *testing.T) {
 		},
 		{
 			User{
-				ID: "111111111111111111111111111111111111111111111111111111111111",
-				Name: "test1",
-				Age: 15,
-				Email: "exampletest.com",
-				Role: "admi",
+				ID:     "111111111111111111111111111111111111111111111111111111111111",
+				Name:   "test1",
+				Age:    15,
+				Email:  "exampletest.com",
+				Role:   "admi",
 				Phones: []string{"880099977552", "880099977512", "8800999771234"},
 			},
 			ValidationErrors{
@@ -236,11 +236,11 @@ func TestIncorrectValidate(t *testing.T) {
 		},
 		{
 			User{
-				ID: "111111111",
-				Name: "test1",
-				Age: 195,
-				Email: "exampletest.com",
-				Role: "admi",
+				ID:     "111111111",
+				Name:   "test1",
+				Age:    195,
+				Email:  "exampletest.com",
+				Role:   "admi",
 				Phones: []string{"880099977552", "8800999775", "880099977"},
 			},
 			ValidationErrors{
@@ -252,7 +252,7 @@ func TestIncorrectValidate(t *testing.T) {
 		},
 		{
 			TestStruct{
-				Ints: []int{0, 40, 50},
+				Ints:  []int{0, 40, 50},
 				Ints2: []int{1, 100, 0, 500},
 			},
 			ValidationErrors{
@@ -261,7 +261,7 @@ func TestIncorrectValidate(t *testing.T) {
 			},
 		},
 		{
-			AppResponseUser {
+			AppResponseUser{
 				A: App{
 					Version: "123456",
 				},
@@ -269,11 +269,11 @@ func TestIncorrectValidate(t *testing.T) {
 					Code: 403,
 				},
 				U: User{
-					ID: "111111111111111111111111111111111111111111111111111111111111",
-					Name: "test1",
-					Age: 15,
-					Email: "exampletest.com",
-					Role: "admi",
+					ID:     "111111111111111111111111111111111111111111111111111111111111",
+					Name:   "test1",
+					Age:    15,
+					Email:  "exampletest.com",
+					Role:   "admi",
 					Phones: []string{"880099977552", "880099977512", "8800999771234"},
 				},
 			},
@@ -288,7 +288,7 @@ func TestIncorrectValidate(t *testing.T) {
 			},
 		},
 		{
-			AppResponse {
+			AppResponse{
 				A: App{
 					Version: "12345",
 				},
@@ -327,44 +327,44 @@ func TestIncorrectValidateExecute(t *testing.T) {
 			ErrNotStruct,
 		},
 		{
-			WrongTestStructTag {
+			WrongTestStructTag{
 				TestInt: 12,
 			},
 			ErrInvalidTag,
 		},
 		{
-			WrongTestStructTagName {
+			WrongTestStructTagName{
 				TestInt: 12,
 			},
 			ErrInvalidTag,
 		},
 		{
-			WrongTestStructTagValue {
+			WrongTestStructTagValue{
 				TestInt: 12,
 			},
 			strconv.ErrSyntax,
 		},
 		{
-			WrongTestStructTag2 {
+			WrongTestStructTag2{
 				TestString: "test",
 			},
 			ErrInvalidTag,
 		},
 		{
-			WrongTestStructTagName2 {
+			WrongTestStructTagName2{
 				TestString: "test",
 			},
 			ErrInvalidTag,
 		},
 		{
-			WrongTestStructTagValue2 {
+			WrongTestStructTagValue2{
 				TestString: "test",
 			},
 			strconv.ErrSyntax,
 		},
 		{
-			WrongComposeStruct {
-				W: WrongTestStructTagName{TestInt: 1},
+			WrongComposeStruct{
+				W:  WrongTestStructTagName{TestInt: 1},
 				W2: WrongTestStructTagValue2{TestString: "rewr"},
 			},
 			ErrInvalidTag,
@@ -387,7 +387,7 @@ func TestIncorrectValidateRegex(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			WrongTestStructTagRegex {
+			WrongTestStructTagRegex{
 				TestString: "12",
 			},
 			&syntax.Error{},
