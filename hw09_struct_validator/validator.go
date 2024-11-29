@@ -102,19 +102,105 @@ func validateValue(value reflect.Value, ve *ValidationErrors, field reflect.Stru
 	case reflect.Slice:
 		switch values := value.Interface().(type) {
 		case []int:
-			for _, v := range values {
-				err := validateInt(v, ve, field)
-				if err != nil {
-					return err
-				}
+			err := validateIntSlice(values, ve, field)
+			if err != nil {
+				return err
 			}
 		case []string:
-			for _, v := range values {
-				err := validateString(v, ve, field)
-				if err != nil {
-					return err
-				}
+			err := validateStringSlice(values, ve, field)
+			if err != nil {
+				return err
 			}
+		}
+	}
+
+	return nil
+}
+
+func validateStringSlice(values []string, ve *ValidationErrors, field reflect.StructField) error {
+	tag := field.Tag.Get("validate")
+
+	if tag == "" {
+		return nil
+	}
+
+	rules := strings.Split(tag, "|")
+	for _, rule := range rules {
+		parsedRule := strings.Split(rule, ":")
+
+		if len(parsedRule) != 2 {
+			return ErrInvalidTag
+		}
+
+		switch parsedRule[0] {
+		case "len":
+			maxLen, err := strconv.Atoi(parsedRule[1])
+			if err != nil {
+				return err
+			}
+			for _, stringValue := range values {
+				validateLen(maxLen, stringValue, ve, field)
+			}
+		case "regexp":
+			regex, err := regexp.Compile(parsedRule[1])
+			if err != nil {
+				return err
+			}
+			for _, stringValue := range values {
+				validateRegex(regex, stringValue, ve, field)
+			}
+		case "in":
+			seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
+			for _, stringValue := range values {
+				validateStringSeq(seq, stringValue, ve, field)
+			}
+		default:
+			return ErrInvalidTag
+		}
+	}
+
+	return nil
+}
+
+func validateIntSlice(values []int, ve *ValidationErrors, field reflect.StructField) error {
+	tag := field.Tag.Get("validate")
+
+	if tag == "" {
+		return nil
+	}
+
+	rules := strings.Split(tag, "|")
+	for _, rule := range rules {
+		parsedRule := strings.Split(rule, ":")
+
+		if len(parsedRule) != 2 {
+			return ErrInvalidTag
+		}
+
+		switch parsedRule[0] {
+		case "max":
+			intMax, err := strconv.Atoi(parsedRule[1])
+			if err != nil {
+				return err
+			}
+			for _, intValue := range values {
+				validateMax(intMax, intValue, ve, field)
+			}
+		case "min":
+			intMin, err := strconv.Atoi(parsedRule[1])
+			if err != nil {
+				return err
+			}
+			for _, intValue := range values {
+				validateMin(intMin, intValue, ve, field)
+			}
+		case "in":
+			seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
+			for _, intValue := range values {
+				validateIntSeq(seq, intValue, ve, field)
+			}		
+		default:
+			return ErrInvalidTag
 		}
 	}
 
@@ -142,22 +228,16 @@ func validateInt(intValue int, ve *ValidationErrors, field reflect.StructField) 
 			if err != nil {
 				return err
 			}
-			if intMax < intValue {
-				*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrTooBigInt})
-			}
+			validateMax(intMax, intValue, ve, field)
 		case "min":
 			intMin, err := strconv.Atoi(parsedRule[1])
 			if err != nil {
 				return err
 			}
-			if intMin > intValue {
-				*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrTooSmallInt})
-			}
+			validateMin(intMin, intValue, ve, field)
 		case "in":
 			seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
-			if !slices.Contains(seq, strconv.Itoa(intValue)) {
-				*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrNotInSeq})
-			}
+			validateIntSeq(seq, intValue, ve, field)
 		default:
 			return ErrInvalidTag
 		}
@@ -187,26 +267,56 @@ func validateString(stringValue string, ve *ValidationErrors, field reflect.Stru
 			if err != nil {
 				return err
 			}
-			if maxLen < utf8.RuneCountInString(stringValue) {
-				*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrTooBigString})
-			}
+			validateLen(maxLen, stringValue, ve, field)
 		case "regexp":
 			regex, err := regexp.Compile(parsedRule[1])
 			if err != nil {
 				return err
 			}
-			if !regex.MatchString(stringValue) {
-				*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrInvalidByRegexString})
-			}
+			validateRegex(regex, stringValue, ve, field)
 		case "in":
 			seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
-			if !slices.Contains(seq, stringValue) {
-				*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrNotInSeq})
-			}
+			validateStringSeq(seq, stringValue, ve, field)
 		default:
 			return ErrInvalidTag
 		}
 	}
 
 	return nil
+}
+
+func validateMax(max, value int, ve *ValidationErrors, field reflect.StructField) {
+	if max < value {
+		*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrTooBigInt})
+	}
+}
+
+func validateMin(min, value int, ve *ValidationErrors, field reflect.StructField) {
+	if min > value {
+		*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrTooSmallInt})
+	}
+}
+
+func validateIntSeq(seq []string, value int, ve *ValidationErrors, field reflect.StructField) {
+	if !slices.Contains(seq, strconv.Itoa(value)) {
+		*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrNotInSeq})
+	}
+}
+
+func validateLen(maxLen int, value string, ve *ValidationErrors, field reflect.StructField) {
+	if maxLen < utf8.RuneCountInString(value) {
+		*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrTooBigString})
+	}
+}
+
+func validateRegex(regex *regexp.Regexp, value string, ve *ValidationErrors, field reflect.StructField) {
+	if !regex.MatchString(value) {
+		*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrInvalidByRegexString})
+	}
+}
+
+func validateStringSeq(seq []string, value string, ve *ValidationErrors, field reflect.StructField) {
+	if !slices.Contains(seq, value) {
+		*ve = append(*ve, ValidationError{Field: field.Name, Err: ErrNotInSeq})
+	}
 }
