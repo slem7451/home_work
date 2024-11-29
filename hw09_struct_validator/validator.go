@@ -28,8 +28,10 @@ var (
 	ErrInvalidByRegexString = errors.New("string doesn't match with regex")
 )
 
-var ErrNotIntInValidate = errors.New("expect int or []int value in validateInt")
-var ErrNotStringInValidate = errors.New("expect string or []string value in validateString")
+var (
+	ErrNotIntInValidate    = errors.New("expect int or []int value in validateInt")
+	ErrNotStringInValidate = errors.New("expect string or []string value in validateString")
+)
 
 type ValidationError struct {
 	Field string
@@ -81,12 +83,12 @@ func joinErrors(ve *ValidationErrors, err error, field reflect.StructField) {
 func validateValue(value reflect.Value, ve *ValidationErrors, field reflect.StructField) error {
 	switch value.Kind() { //nolint:exhaustive
 	case reflect.Int:
-		err := validateInt(int(value.Int()), ve, field)
+		err := validate(int(value.Int()), ve, field)
 		if err != nil {
 			return err
 		}
 	case reflect.String:
-		err := validateString(value.String(), ve, field)
+		err := validate(value.String(), ve, field)
 		if err != nil {
 			return err
 		}
@@ -105,12 +107,12 @@ func validateValue(value reflect.Value, ve *ValidationErrors, field reflect.Stru
 	case reflect.Slice:
 		switch values := value.Interface().(type) {
 		case []int:
-			err := validateInt(values, ve, field)
+			err := validate(values, ve, field)
 			if err != nil {
 				return err
 			}
 		case []string:
-			err := validateString(values, ve, field)
+			err := validate(values, ve, field)
 			if err != nil {
 				return err
 			}
@@ -120,7 +122,7 @@ func validateValue(value reflect.Value, ve *ValidationErrors, field reflect.Stru
 	return nil
 }
 
-func validateInt(intValue any, ve *ValidationErrors, field reflect.StructField) error {
+func validate(value any, ve *ValidationErrors, field reflect.StructField) error {
 	tag := field.Tag.Get("validate")
 
 	if tag == "" {
@@ -135,63 +137,49 @@ func validateInt(intValue any, ve *ValidationErrors, field reflect.StructField) 
 			return ErrInvalidTag
 		}
 
-		switch parsedRule[0] {
-		case "max":
-			intMax, err := strconv.Atoi(parsedRule[1])
-			if err != nil {
-				return err
+		switch value.(type) {
+		case int, []int:
+			switch parsedRule[0] {
+			case "max":
+				intMax, err := strconv.Atoi(parsedRule[1])
+				if err != nil {
+					return err
+				}
+				validateMax(intMax, value, ve, field)
+			case "min":
+				intMin, err := strconv.Atoi(parsedRule[1])
+				if err != nil {
+					return err
+				}
+				validateMin(intMin, value, ve, field)
+			case "in":
+				seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
+				validateIntSeq(seq, value, ve, field)
+			default:
+				return ErrInvalidTag
 			}
-			validateMax(intMax, intValue, ve, field)
-		case "min":
-			intMin, err := strconv.Atoi(parsedRule[1])
-			if err != nil {
-				return err
+		case string, []string:
+			switch parsedRule[0] {
+			case "len":
+				maxLen, err := strconv.Atoi(parsedRule[1])
+				if err != nil {
+					return err
+				}
+				validateLen(maxLen, value, ve, field)
+			case "regexp":
+				regex, err := regexp.Compile(parsedRule[1])
+				if err != nil {
+					return err
+				}
+				validateRegex(regex, value, ve, field)
+			case "in":
+				seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
+				validateStringSeq(seq, value, ve, field)
+			default:
+				return ErrInvalidTag
 			}
-			validateMin(intMin, intValue, ve, field)
-		case "in":
-			seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
-			validateIntSeq(seq, intValue, ve, field)
 		default:
-			return ErrInvalidTag
-		}
-	}
-
-	return nil
-}
-
-func validateString(stringValue any, ve *ValidationErrors, field reflect.StructField) error {
-	tag := field.Tag.Get("validate")
-
-	if tag == "" {
-		return nil
-	}
-
-	rules := strings.Split(tag, "|")
-	for _, rule := range rules {
-		parsedRule := strings.Split(rule, ":")
-
-		if len(parsedRule) != 2 {
-			return ErrInvalidTag
-		}
-
-		switch parsedRule[0] {
-		case "len":
-			maxLen, err := strconv.Atoi(parsedRule[1])
-			if err != nil {
-				return err
-			}
-			validateLen(maxLen, stringValue, ve, field)
-		case "regexp":
-			regex, err := regexp.Compile(parsedRule[1])
-			if err != nil {
-				return err
-			}
-			validateRegex(regex, stringValue, ve, field)
-		case "in":
-			seq := strings.Split(strings.ReplaceAll(parsedRule[1], " ", ""), ",")
-			validateStringSeq(seq, stringValue, ve, field)
-		default:
-			return ErrInvalidTag
+			return nil
 		}
 	}
 
@@ -213,7 +201,7 @@ func validateMax(maxValue int, value any, ve *ValidationErrors, field reflect.St
 	default:
 		return ErrNotIntInValidate
 	}
-	
+
 	return nil
 }
 
@@ -232,7 +220,7 @@ func validateMin(minValue int, value any, ve *ValidationErrors, field reflect.St
 	default:
 		return ErrNotIntInValidate
 	}
-	
+
 	return nil
 }
 
@@ -251,7 +239,7 @@ func validateIntSeq(seq []string, value any, ve *ValidationErrors, field reflect
 	default:
 		return ErrNotIntInValidate
 	}
-	
+
 	return nil
 }
 
@@ -270,7 +258,7 @@ func validateLen(maxLen int, value any, ve *ValidationErrors, field reflect.Stru
 	default:
 		return ErrNotStringInValidate
 	}
-	
+
 	return nil
 }
 
@@ -289,7 +277,7 @@ func validateRegex(regex *regexp.Regexp, value any, ve *ValidationErrors, field 
 	default:
 		return ErrNotStringInValidate
 	}
-	
+
 	return nil
 }
 
@@ -308,6 +296,6 @@ func validateStringSeq(seq []string, value any, ve *ValidationErrors, field refl
 	default:
 		return ErrNotStringInValidate
 	}
-	
+
 	return nil
 }
