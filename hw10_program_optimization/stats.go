@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mailru/easyjson"
+	"github.com/mailru/easyjson" //nolint:depguard
 )
 
 //easyjson:json

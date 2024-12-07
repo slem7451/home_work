@@ -10,6 +10,7 @@ func BenchmarkDomainStat(b *testing.B) {
 	if err != nil {
 		return
 	}
+
 	defer r.Close()
 
 	if len(r.File) != 1 {
@@ -21,7 +22,6 @@ func BenchmarkDomainStat(b *testing.B) {
 		return
 	}
 
-	
 	for i := 0; i < b.N; i++ {
 		GetDomainStat(data, "biz")
 	}
