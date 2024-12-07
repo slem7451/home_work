@@ -36,4 +36,28 @@ func TestGetDomainStat(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, DomainStat{}, result)
 	})
+
+	t.Run("nil reader", func(t *testing.T) {
+		result, err := GetDomainStat(nil, "gov")
+		require.NoError(t, err)
+		require.Equal(t, DomainStat{}, result)
+	})
+
+	t.Run("empty data", func(t *testing.T) {
+		result, err := GetDomainStat(bytes.NewBufferString(""), "gov")
+		require.NoError(t, err)
+		require.Equal(t, DomainStat{}, result)
+	})
+
+	t.Run("no email", func(t *testing.T) {
+		result, err := GetDomainStat(bytes.NewBufferString(`{"Id":1,"Name":"Howard Mendoza","Username":"0Oliver","Phone":"6-866-899-36-79","Password":"InAQJvsq","Address":"Blackbird Place 25"}`), "gov")
+		require.NoError(t, err)
+		require.Equal(t, DomainStat{}, result)
+	})
+
+	t.Run("case insensetive domain", func(t *testing.T) {
+		result, err := GetDomainStat(bytes.NewBufferString(data), "GoV")
+		require.NoError(t, err)
+		require.Equal(t, DomainStat{"browsedrive.gov": 1}, result)
+	})
 }

@@ -24,12 +24,16 @@ type User struct {
 type DomainStat map[string]int
 
 func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
+	if r == nil {
+		return DomainStat{}, nil
+	}
+
 	return countDomains(r, domain)
 }
 
 func countDomains(r io.Reader, domain string) (DomainStat, error) {
 	result := make(DomainStat)
-	regex := regexp.MustCompile("\\." + domain)
+	regex := regexp.MustCompile("(?i)\\." + domain)
 	reader := bufio.NewReader(r)
 
 	for {
