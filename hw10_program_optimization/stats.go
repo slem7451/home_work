@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"regexp"
 	"strings"
 
 	"github.com/mailru/easyjson" //nolint:depguard
@@ -33,8 +32,8 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 
 func countDomains(r io.Reader, domain string) (DomainStat, error) {
 	result := make(DomainStat)
-	regex := regexp.MustCompile("(?i)\\." + domain)
 	reader := bufio.NewReader(r)
+	var email string
 
 	for {
 		line, _, err := reader.ReadLine()
@@ -51,8 +50,9 @@ func countDomains(r io.Reader, domain string) (DomainStat, error) {
 			return result, err
 		}
 
-		if regex.MatchString(user.Email) {
-			result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])]++
+		email = strings.ToLower(user.Email)
+		if strings.HasSuffix(email, strings.ToLower(domain)) {
+			result[strings.SplitN(email, "@", 2)[1]]++
 		}
 	}
 
