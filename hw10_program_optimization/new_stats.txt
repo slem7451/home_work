@@ -1,0 +1,16 @@
+goos: linux
+goarch: amd64
+pkg: github.com/slem7451/home_work/hw10_program_optimization
+cpu: 12th Gen Intel(R) Core(TM) i5-12400F
+BenchmarkDomainStat-12    	  532470	      1954 ns/op	    5533 B/op	      20 allocs/op
+BenchmarkDomainStat-12    	  599961	      1865 ns/op	    5531 B/op	      20 allocs/op
+BenchmarkDomainStat-12    	  625596	      1846 ns/op	    5530 B/op	      19 allocs/op
+BenchmarkDomainStat-12    	  645369	      1828 ns/op	    5529 B/op	      19 allocs/op
+BenchmarkDomainStat-12    	  545757	      1854 ns/op	    5533 B/op	      20 allocs/op
+BenchmarkDomainStat-12    	  552747	      1823 ns/op	    5532 B/op	      20 allocs/op
+BenchmarkDomainStat-12    	  624062	      1851 ns/op	    5530 B/op	      19 allocs/op
+BenchmarkDomainStat-12    	  538785	      1963 ns/op	    5533 B/op	      20 allocs/op
+BenchmarkDomainStat-12    	  591280	      1936 ns/op	    5531 B/op	      20 allocs/op
+BenchmarkDomainStat-12    	  592131	      1866 ns/op	    5531 B/op	      20 allocs/op
+PASS
+ok  	github.com/slem7451/home_work/hw10_program_optimization	43.666s
