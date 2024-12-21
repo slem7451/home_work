@@ -2,8 +2,8 @@ package main
 
 import (
 	"io"
-	"time"
 	"net"
+	"time"
 )
 
 type TelnetClient interface {
@@ -16,21 +16,21 @@ type TelnetClient interface {
 type client struct {
 	address string
 	timeout time.Duration
-	in io.ReadCloser
-	out io.Writer
-	con net.Conn
+	in      io.ReadCloser
+	out     io.Writer
+	con     net.Conn
 }
 
 func NewTelnetClient(address string, timeout time.Duration, in io.ReadCloser, out io.Writer) TelnetClient {
-	return &client {
+	return &client{
 		address: address,
 		timeout: timeout,
-		in: in,
-		out: out,
+		in:      in,
+		out:     out,
 	}
 }
 
-func (c *client)Connect() error {
+func (c *client) Connect() error {
 	con, err := net.DialTimeout("tcp", c.address, c.timeout)
 	if err != nil {
 		return err
@@ -40,19 +40,19 @@ func (c *client)Connect() error {
 	return nil
 }
 
-func (c *client)Close() error {
+func (c *client) Close() error {
 	if c.con != nil {
 		return c.con.Close()
 	}
 	return nil
 }
 
-func (c *client)Send() error {
+func (c *client) Send() error {
 	_, err := io.Copy(c.con, c.in)
 	return err
 }
 
-func (c *client)Receive() error {
+func (c *client) Receive() error {
 	_, err := io.Copy(c.out, c.con)
 	return err
 }
