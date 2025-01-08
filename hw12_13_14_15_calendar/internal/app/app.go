@@ -5,14 +5,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
-	storagelib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
-	memorystorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/memory"
-	sqlstorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/sql"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"                       //nolint:depguard
+	storagelib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"           //nolint:depguard
+	memorystorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/memory" //nolint:depguard
+	sqlstorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/sql"       //nolint:depguard
 )
 
 const (
-	SqlStorage = "sql"
+	SQLStorage      = "sql"
 	InMemoryStorage = "in-memory"
 )
 
@@ -34,8 +34,8 @@ type Storage interface {
 
 func NewStorage(config config.Config) Storage {
 	switch strings.ToLower(config.Storage) {
-	case SqlStorage:
-		return sqlstorage.New(config.Db)
+	case SQLStorage:
+		return sqlstorage.New(config.DB)
 	case InMemoryStorage:
 		return memorystorage.New()
 	default:
@@ -43,11 +43,11 @@ func NewStorage(config config.Config) Storage {
 	}
 }
 
-func New(logger Logger, storage Storage) *App {
+func New(_ Logger, _ Storage) *App {
 	return &App{}
 }
 
-func (a *App) CreateEvent(ctx context.Context, id int, title string) error {
+func (a *App) CreateEvent(_ context.Context, _ int, _ string) error {
 	// TODO
 	return nil
 	// return a.storage.CreateEvent(storage.Event{ID: id, Title: title})

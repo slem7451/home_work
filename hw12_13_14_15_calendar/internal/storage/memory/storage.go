@@ -6,30 +6,32 @@ import (
 	"sync"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage" //nolint:depguard
 )
 
-var ErrNotUniqueID = errors.New("ID must be unique")
-var ErrEventNotFound = errors.New("event with this ID not found")
+var (
+	ErrNotUniqueID   = errors.New("ID must be unique")
+	ErrEventNotFound = errors.New("event with this ID not found")
+)
 
 type Storage struct {
 	mu      sync.RWMutex
 	storage map[int]storage.Event
-	eventId int
+	eventID int
 }
 
 func New() *Storage {
-	return &Storage{storage: make(map[int]storage.Event), eventId: 1}
+	return &Storage{storage: make(map[int]storage.Event), eventID: 1}
 }
 
-func (s *Storage) Create(ctx context.Context, event storage.Event) (int, error) {
+func (s *Storage) Create(_ context.Context, event storage.Event) (int, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if event.ID == 0 {
-		event.ID = s.eventId
-		s.eventId++
-	} 
+		event.ID = s.eventID
+		s.eventID++
+	}
 
 	if _, ok := s.storage[event.ID]; ok {
 		return 0, ErrNotUniqueID
@@ -39,7 +41,7 @@ func (s *Storage) Create(ctx context.Context, event storage.Event) (int, error) 
 	return event.ID, nil
 }
 
-func (s *Storage) Update(ctx context.Context, id int, event storage.Event) error {
+func (s *Storage) Update(_ context.Context, id int, event storage.Event) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

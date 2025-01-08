@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/require" //nolint:depguard
 )
 
 func TestConfig(t *testing.T) {
@@ -14,12 +14,12 @@ func TestConfig(t *testing.T) {
 
 	require.Equal(t, "INFO", config.Logger.Level)
 
-	require.Equal(t, "localhost", config.Db.Host)
-	require.Equal(t, 5432, config.Db.Port)
-	require.Equal(t, "root", config.Db.User)
-	require.Equal(t, "root", config.Db.Password)
-	require.Equal(t, "app_db", config.Db.Name)
+	require.Equal(t, "localhost", config.DB.Host)
+	require.Equal(t, 5432, config.DB.Port)
+	require.Equal(t, "root", config.DB.User)
+	require.Equal(t, "root", config.DB.Password)
+	require.Equal(t, "app_db", config.DB.Name)
 
-	require.Equal(t, "localhost", config.Http.Host)
-	require.Equal(t, 8080, config.Http.Port)
+	require.Equal(t, "localhost", config.HTTP.Host)
+	require.Equal(t, 8080, config.HTTP.Port)
 }

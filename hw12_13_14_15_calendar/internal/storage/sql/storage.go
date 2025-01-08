@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	_ "github.com/jackc/pgx/stdlib"
-	"github.com/jmoiron/sqlx"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
+	_ "github.com/jackc/pgx/stdlib"                                         //nolint:depguard
+	"github.com/jmoiron/sqlx"                                               //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"  //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage" //nolint:depguard
 )
 
 type Storage struct {
@@ -16,8 +16,9 @@ type Storage struct {
 	conn *sqlx.Conn
 }
 
-func New(dbConf config.DbConf) *Storage {
-	db, err := sqlx.Open("pgx", fmt.Sprintf("postgres://%s:%s@%s:%d/%s", dbConf.User, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Name))
+func New(dbConf config.DBConf) *Storage {
+	db, err := sqlx.Open("pgx", fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
+		dbConf.User, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Name))
 	if err != nil {
 		panic(err)
 	}
@@ -64,7 +65,13 @@ func (s *Storage) Create(ctx context.Context, event storage.Event) (int, error) 
 }
 
 func (s *Storage) Update(ctx context.Context, id int, event storage.Event) error {
-	query := `update events set title = :title, event_date = :event_date, date_since = :date_since, descr = :descr, user_id = :user_id, notify_date = :notify_date
+	query := `update events set 
+				title = :title, 
+				event_date = :event_date, 
+				date_since = :date_since, 
+				descr = :descr, 
+				user_id = :user_id, 
+				notify_date = :notify_date
 				where id = :id`
 	event.ID = id
 
@@ -81,7 +88,7 @@ func (s *Storage) Delete(ctx context.Context, id int) error {
 	if _, err := s.db.ExecContext(ctx, query, id); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -107,8 +114,8 @@ func (s *Storage) FindForMonth(ctx context.Context, date time.Time) ([]storage.E
 }
 
 func (s *Storage) FindBetweenDates(ctx context.Context, start time.Time, end time.Time) ([]storage.Event, error) {
-	rows, err := s.db.NamedQueryContext(ctx, `select * from event where event_date between :start and :end`, map[string]time.Time{"start": start, "end": end})
-
+	rows, err := s.db.NamedQueryContext(ctx, `select * from event where event_date between :start and :end`,
+		map[string]time.Time{"start": start, "end": end})
 	if err != nil {
 		return nil, err
 	}

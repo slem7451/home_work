@@ -5,16 +5,23 @@ import (
 	"testing"
 	"time"
 
-	storagelib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
-	"github.com/stretchr/testify/require"
+	storagelib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage" //nolint:depguard
+	"github.com/stretchr/testify/require"                                              //nolint:depguard
 )
 
-func TestStorage(t *testing.T) {
+func TestStorage(t *testing.T) { //nolint:funlen
 	t.Run("insert right w/o ID", func(t *testing.T) {
-		var storage = New()
+		storage := New()
 		events := make(map[int]storagelib.Event)
 
-		event := storagelib.Event{Title: "test1", EventDate: time.Now(), DateSince: time.Now(), Descr: "test descr", UserID: 1, NotifyDate: time.Now()}
+		event := storagelib.Event{
+			Title:      "test1",
+			EventDate:  time.Now(),
+			DateSince:  time.Now(),
+			Descr:      "test descr",
+			UserID:     1,
+			NotifyDate: time.Now(),
+		}
 		id, err := storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 1, id)
@@ -38,16 +45,30 @@ func TestStorage(t *testing.T) {
 	})
 
 	t.Run("insert right with ID", func(t *testing.T) {
-		var storage = New()
+		storage := New()
 		events := make(map[int]storagelib.Event)
 
-		event := storagelib.Event{ID: 1, Title: "test1", EventDate: time.Now(), DateSince: time.Now(), Descr: "test descr", UserID: 1, NotifyDate: time.Now()}
+		event := storagelib.Event{
+			ID:         1,
+			Title:      "test1",
+			EventDate:  time.Now(),
+			DateSince:  time.Now(),
+			Descr:      "test descr",
+			UserID:     1,
+			NotifyDate: time.Now(),
+		}
 		id, err := storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 1, id)
 		events[id] = event
 
-		event = storagelib.Event{ID: 2, Title: "test2", EventDate: time.Now(), DateSince: time.Now(), UserID: 1}
+		event = storagelib.Event{
+			ID:        2,
+			Title:     "test2",
+			EventDate: time.Now(),
+			DateSince: time.Now(),
+			UserID:    1,
+		}
 		id, err = storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 2, id)
@@ -63,9 +84,17 @@ func TestStorage(t *testing.T) {
 	})
 
 	t.Run("insert wrong", func(t *testing.T) {
-		var storage = New()
+		storage := New()
 
-		event := storagelib.Event{ID: 1, Title: "test1", EventDate: time.Now(), DateSince: time.Now(), Descr: "test descr", UserID: 1, NotifyDate: time.Now()}
+		event := storagelib.Event{
+			ID:         1,
+			Title:      "test1",
+			EventDate:  time.Now(),
+			DateSince:  time.Now(),
+			Descr:      "test descr",
+			UserID:     1,
+			NotifyDate: time.Now(),
+		}
 		id, err := storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 1, id)
@@ -77,9 +106,16 @@ func TestStorage(t *testing.T) {
 	})
 
 	t.Run("update right", func(t *testing.T) {
-		var storage = New()
+		storage := New()
 
-		event := storagelib.Event{ID: 1, Title: "test1", EventDate: time.Now(), DateSince: time.Now(), Descr: "test descr", UserID: 1, NotifyDate: time.Now()}
+		event := storagelib.Event{
+			ID:        1,
+			Title:     "test1",
+			EventDate: time.Now(),
+			DateSince: time.Now(),
+			Descr:     "test descr",
+			UserID:    1, NotifyDate: time.Now(),
+		}
 		id, err := storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 1, id)
@@ -96,9 +132,17 @@ func TestStorage(t *testing.T) {
 	})
 
 	t.Run("update wrong", func(t *testing.T) {
-		var storage = New()
+		storage := New()
 
-		event := storagelib.Event{ID: 1, Title: "test1", EventDate: time.Now(), DateSince: time.Now(), Descr: "test descr", UserID: 1, NotifyDate: time.Now()}
+		event := storagelib.Event{
+			ID:         1,
+			Title:      "test1",
+			EventDate:  time.Now(),
+			DateSince:  time.Now(),
+			Descr:      "test descr",
+			UserID:     1,
+			NotifyDate: time.Now(),
+		}
 		id, err := storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 1, id)
@@ -109,9 +153,17 @@ func TestStorage(t *testing.T) {
 	})
 
 	t.Run("delete", func(t *testing.T) {
-		var storage = New()
+		storage := New()
 
-		event := storagelib.Event{ID: 1, Title: "test1", EventDate: time.Now(), DateSince: time.Now(), Descr: "test descr", UserID: 1, NotifyDate: time.Now()}
+		event := storagelib.Event{
+			ID:         1,
+			Title:      "test1",
+			EventDate:  time.Now(),
+			DateSince:  time.Now(),
+			Descr:      "test descr",
+			UserID:     1,
+			NotifyDate: time.Now(),
+		}
 		id, err := storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 1, id)
@@ -120,25 +172,42 @@ func TestStorage(t *testing.T) {
 	})
 
 	t.Run("selects", func(t *testing.T) {
-		var storage = New()
+		storage := New()
 		events := make(map[int]storagelib.Event)
 		testTime := time.Date(2024, 12, 2, 0, 0, 0, 0, time.Now().Location())
 
-		event := storagelib.Event{Title: "test1", EventDate: testTime, DateSince: time.Now(), Descr: "test descr", UserID: 1, NotifyDate: time.Now()}
+		event := storagelib.Event{
+			Title:      "test1",
+			EventDate:  testTime,
+			DateSince:  time.Now(),
+			Descr:      "test descr",
+			UserID:     1,
+			NotifyDate: time.Now(),
+		}
 		id, err := storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 1, id)
 		event.ID = id
 		events[id] = event
 
-		event = storagelib.Event{Title: "test2", EventDate: testTime.Add(time.Hour * 24 * 3), DateSince: time.Now(), UserID: 1}
+		event = storagelib.Event{
+			Title:     "test2",
+			EventDate: testTime.Add(time.Hour * 24 * 3),
+			DateSince: time.Now(),
+			UserID:    1,
+		}
 		id, err = storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 2, id)
 		event.ID = id
 		events[id] = event
 
-		event = storagelib.Event{Title: "test3", EventDate: testTime.Add(time.Hour * 24 * 13), DateSince: time.Now(), UserID: 1}
+		event = storagelib.Event{
+			Title:     "test3",
+			EventDate: testTime.Add(time.Hour * 24 * 13),
+			DateSince: time.Now(),
+			UserID:    1,
+		}
 		id, err = storage.Create(context.Background(), event)
 		require.Nil(t, err)
 		require.Equal(t, 3, id)

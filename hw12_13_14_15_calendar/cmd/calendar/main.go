@@ -8,10 +8,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"
-	internalhttp "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/http"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"                      //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"                   //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                   //nolint:depguard
+	internalhttp "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/http" //nolint:depguard
 )
 
 var configFile string
@@ -34,7 +34,7 @@ func main() {
 	storage := app.NewStorage(config)
 	calendar := app.New(logg, storage)
 
-	server := internalhttp.NewServer(logg, calendar, config.Http)
+	server := internalhttp.NewServer(logg, calendar, config.HTTP)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
