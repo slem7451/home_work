@@ -86,14 +86,14 @@ func (s *Storage) Delete(ctx context.Context, id int) error {
 }
 
 func (s *Storage) FindForDay(ctx context.Context, date time.Time) ([]storage.Event, error) {
-	start := date.Truncate(time.Hour * 24)
+	start := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
 	end := start.Add(time.Hour * 24).Add(-time.Nanosecond)
 
 	return s.FindBetweenDates(ctx, start, end)
 }
 
 func (s *Storage) FindForWeek(ctx context.Context, date time.Time) ([]storage.Event, error) {
-	start := date.Truncate(time.Hour * 24 * 7)
+	start := date.Add(-time.Hour * 24 * time.Duration(date.Weekday())).Add(time.Hour * 24)
 	end := start.Add(time.Hour * 24 * 7).Add(-time.Nanosecond)
 
 	return s.FindBetweenDates(ctx, start, end)

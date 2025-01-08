@@ -15,12 +15,11 @@ var ErrEventNotFound = errors.New("event with this ID not found")
 type Storage struct {
 	mu      sync.RWMutex
 	storage map[int]storage.Event
+	eventId int
 }
 
-var eventId = 1
-
 func New() *Storage {
-	return &Storage{storage: make(map[int]storage.Event)}
+	return &Storage{storage: make(map[int]storage.Event), eventId: 1}
 }
 
 func (s *Storage) Create(ctx context.Context, event storage.Event) (int, error) {
@@ -28,9 +27,11 @@ func (s *Storage) Create(ctx context.Context, event storage.Event) (int, error) 
 	defer s.mu.Unlock()
 
 	if event.ID == 0 {
-		event.ID = eventId
-		eventId++
-	} else if _, ok := s.storage[event.ID]; ok {
+		event.ID = s.eventId
+		s.eventId++
+	} 
+
+	if _, ok := s.storage[event.ID]; ok {
 		return 0, ErrNotUniqueID
 	}
 
@@ -46,7 +47,9 @@ func (s *Storage) Update(ctx context.Context, id int, event storage.Event) error
 		return ErrEventNotFound
 	}
 
-	s.storage[id] = event
+	delete(s.storage, id)
+
+	s.storage[event.ID] = event
 	return nil
 }
 
@@ -59,14 +62,14 @@ func (s *Storage) Delete(_ context.Context, id int) error {
 }
 
 func (s *Storage) FindForDay(ctx context.Context, date time.Time) ([]storage.Event, error) {
-	start := date.Truncate(time.Hour * 24)
+	start := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
 	end := start.Add(time.Hour * 24).Add(-time.Nanosecond)
 
 	return s.FindBetweenDates(ctx, start, end)
 }
 
 func (s *Storage) FindForWeek(ctx context.Context, date time.Time) ([]storage.Event, error) {
-	start := date.Truncate(time.Hour * 24 * 7)
+	start := date.Add(-time.Hour * 24 * time.Duration(date.Weekday())).Add(time.Hour * 24)
 	end := start.Add(time.Hour * 24 * 7).Add(-time.Nanosecond)
 
 	return s.FindBetweenDates(ctx, start, end)
