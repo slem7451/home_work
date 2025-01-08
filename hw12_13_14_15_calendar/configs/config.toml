@@ -1,5 +1,15 @@
+storage = "sql"
+
 [logger]
 level = "INFO"
 
-# TODO
-# ...
+[http]
+host = "localhost"
+port = 8080
+
+[db]
+host = "localhost"
+port = 5432
+user = "root"
+password = "root"
+name = "app_db"
