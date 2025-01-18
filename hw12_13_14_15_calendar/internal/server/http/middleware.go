@@ -26,7 +26,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		panic(err)
 	}
 
-	logFile, err := os.OpenFile("logs/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
+	logFile, err := os.OpenFile("logs/http_app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
 	if err != nil {
 		panic(err)
 	}

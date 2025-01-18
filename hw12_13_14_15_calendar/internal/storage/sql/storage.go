@@ -51,17 +51,18 @@ func (s *Storage) Create(ctx context.Context, event storage.Event) (int, error) 
 					values (:id, :title, :event_date, :date_since, :descr, :user_id, :notify_date) returning id`
 	}
 
-	res, err := s.db.NamedExecContext(ctx, query, event)
+	stmt, err := s.db.PrepareNamedContext(ctx, query)
 	if err != nil {
 		return 0, err
 	}
 
-	id, err := res.LastInsertId()
+	var id int
+	err = stmt.Get(&id, event)
 	if err != nil {
 		return 0, err
 	}
 
-	return int(id), nil
+	return id, nil
 }
 
 func (s *Storage) Update(ctx context.Context, id int, event storage.Event) error {
@@ -83,7 +84,7 @@ func (s *Storage) Update(ctx context.Context, id int, event storage.Event) error
 }
 
 func (s *Storage) Delete(ctx context.Context, id int) error {
-	query := `delete from event where id = $1`
+	query := `delete from events where id = $1`
 
 	if _, err := s.db.ExecContext(ctx, query, id); err != nil {
 		return err
@@ -114,8 +115,7 @@ func (s *Storage) FindForMonth(ctx context.Context, date time.Time) ([]storage.E
 }
 
 func (s *Storage) FindBetweenDates(ctx context.Context, start time.Time, end time.Time) ([]storage.Event, error) {
-	rows, err := s.db.NamedQueryContext(ctx, `select * from event where event_date between :start and :end`,
-		map[string]time.Time{"start": start, "end": end})
+	rows, err := s.db.QueryxContext(ctx, `select * from events where event_date between $1 and $2`, start, end)
 	if err != nil {
 		return nil, err
 	}
