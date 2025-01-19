@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Logger  LoggerConf `toml:"logger"`
 	HTTP    HTTPConf   `toml:"http"`
+	GRPC    GRPCConf   `toml:"grpc"`
 	DB      DBConf     `toml:"db"`
 	Storage string     `toml:"storage"`
 }
@@ -18,6 +19,11 @@ type LoggerConf struct {
 }
 
 type HTTPConf struct {
+	Host string `toml:"host"`
+	Port int    `toml:"port"`
+}
+
+type GRPCConf struct {
 	Host string `toml:"host"`
 	Port int    `toml:"port"`
 }

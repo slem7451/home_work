@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/http/structures"
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
 )
@@ -21,7 +22,7 @@ const (
 )
 
 type calendarHandler struct{
-	app Application
+	app server.Application
 	ctx context.Context
 }
 

@@ -7,33 +7,16 @@ import (
 	"time"
 
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"
 )
 
 type Server struct {
 	http.Server
-	logger Logger
+	logger server.Logger
 	handler *calendarHandler
 }
 
-type Logger interface {
-	Error(msg string)
-	Warn(msg string)
-	Info(msg string)
-	Debug(msg string)
-}
-
-type Application interface {
-	CreateEvent(ctx context.Context, event storage.Event) (int, error)
-	UpdateEvent(ctx context.Context, id int, event storage.Event) error
-	DeleteEvent(ctx context.Context, id int) error
-	FindEventsForDay(ctx context.Context, date time.Time) ([]storage.Event, error)
-	FindEventsForWeek(ctx context.Context, date time.Time) ([]storage.Event, error)
-	FindEventsForMonth(ctx context.Context, date time.Time) ([]storage.Event, error)
-	FindEventsBetweenDates(ctx context.Context, start time.Time, end time.Time) ([]storage.Event, error)
-}
-
-func NewServer(logger Logger, app Application, httpConf config.HTTPConf) *Server {
+func NewServer(logger server.Logger, app server.Application, httpConf config.HTTPConf) server.Server {
 	handler := &calendarHandler{
 		app: app,
 	}
@@ -64,4 +47,8 @@ func (s *Server) Start(ctx context.Context) error {
 
 func (s *Server) Stop(ctx context.Context) error {
 	return s.Server.Shutdown(ctx)
+}
+
+func (s *Server) Whoami() string {
+	return "HTTP"
 }

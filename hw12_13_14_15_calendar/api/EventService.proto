@@ -1,7 +1,68 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package event;
 
+option go_package = "./;pb";
+
 message Event {
-    // TODO
+    int64 id = 1;
+    string title = 2;
+    google.protobuf.Timestamp event_date = 3;
+    google.protobuf.Timestamp date_since = 4;
+    string descr = 5;
+    int64 user_id = 6;
+    google.protobuf.Timestamp notify_date = 7;
+}
+
+message CreateEventRequest {
+    Event event = 1;
+}
+
+message CreateEventResponse {
+    oneof resp {
+        int64 id = 1;
+        string error = 2;
+    }
+}
+
+message UpdateEventRequest {
+    int64 event_id = 1;
+    Event event = 2;
+}
+
+message UpdateEventResponse {
+    string error = 1;
+}
+
+message DeleteEventRequest {
+    int64 event_id = 1;
+}
+
+message DeleteEventResponse {
+    string error = 1;
+}
+
+message FindEventsDateRequest {
+    google.protobuf.Timestamp date = 1;
+}
+
+message FindEventsBetweenRequest {
+    google.protobuf.Timestamp start = 1;
+    google.protobuf.Timestamp end = 2;
+}
+
+message FindEventsResponse {
+    repeated Event events = 1;
+}
+
+service EventService {
+    rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
+    rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResponse);
+    rpc DeleteEvent(DeleteEventRequest) returns (DeleteEventResponse);
+    rpc FindEventsForDay(FindEventsDateRequest) returns (FindEventsResponse);
+    rpc FindEventsForWeek(FindEventsDateRequest) returns (FindEventsResponse);
+    rpc FindEventsForMonth(FindEventsDateRequest) returns (FindEventsResponse);
+    rpc FindEventsBetweenDates(FindEventsBetweenRequest) returns (FindEventsResponse);
 }

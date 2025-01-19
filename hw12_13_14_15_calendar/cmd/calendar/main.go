@@ -3,15 +3,16 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"                      //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"                   //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                   //nolint:depguard
-	internalhttp "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/http" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"    //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger" //nolint:depguard
+	serverbuilder "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/builder"
 )
 
 var configFile string
@@ -34,28 +35,36 @@ func main() {
 	storage := app.NewStorage(config)
 	calendar := app.New(logg, storage)
 
-	server := internalhttp.NewServer(logg, calendar, config.HTTP)
+	servers := serverbuilder.NewServers(logg, calendar, config)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	go func() {
-		<-ctx.Done()
-
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-		defer cancel()
-
-		if err := server.Stop(ctx); err != nil {
-			logg.Error("failed to stop http server: " + err.Error())
-		}
-	}()
+	for _, server := range servers {
+		go func() {
+			<-ctx.Done()
+	
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+			defer cancel()
+	
+			if err := server.Stop(ctx); err != nil {
+				logg.Error(fmt.Sprintf("failed to stop %s server: %s", server.Whoami(), err.Error()))
+			}
+		}()
+	}
 
 	logg.Info("calendar is running...")
 
-	if err := server.Start(ctx); err != nil {
-		logg.Error("failed to start http server: " + err.Error())
-		cancel()
-		os.Exit(1) //nolint:gocritic
+	for _, server := range servers {
+		go func() {
+			if err := server.Start(ctx); err != nil {
+				logg.Error(fmt.Sprintf("failed to start %s server: %s", server.Whoami(), err.Error()))
+				cancel()
+				os.Exit(1) //nolint:gocritic
+			}
+		}()
 	}
+
+	<-ctx.Done()	
 }
