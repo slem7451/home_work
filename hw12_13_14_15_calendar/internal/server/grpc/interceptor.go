@@ -24,7 +24,9 @@ func loggingInterceptor() grpc.UnaryServerInterceptor {
 
 	logger := log.New(logFile, "", 0)
 
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (
+		interface{}, error,
+	) {
 		start := time.Now()
 		result, err := handler(ctx, req)
 		end := time.Since(start)

@@ -19,7 +19,7 @@ const (
 
 type App struct {
 	storage Storage
-	logger Logger
+	logger  Logger
 }
 
 type Logger interface {
@@ -52,7 +52,7 @@ func NewStorage(config config.Config) Storage {
 
 func New(logger Logger, storage Storage) *App {
 	return &App{
-		logger: logger,
+		logger:  logger,
 		storage: storage,
 	}
 }

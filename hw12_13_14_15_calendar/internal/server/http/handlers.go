@@ -9,19 +9,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/http/structures"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"                 //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/http/structures" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"                //nolint:depguard
 )
 
 const (
-	dayMode = "day"
-	weekMode = "week"
-	monthMode = "month"
+	dayMode     = "day"
+	weekMode    = "week"
+	monthMode   = "month"
 	betweenMode = "between"
 )
 
-type calendarHandler struct{
+type calendarHandler struct {
 	app server.Application
 	ctx context.Context
 }
@@ -59,7 +59,7 @@ func validateAndParseFindRequest(mode string, reqMap map[string]string) (map[str
 		if !ok {
 			return make(map[string]time.Time), errors.New("date is required")
 		}
-		
+
 		date, err := time.Parse(time.DateOnly, dateStr)
 		if err != nil {
 			return make(map[string]time.Time), err
@@ -76,7 +76,7 @@ func validateAndParseFindRequest(mode string, reqMap map[string]string) (map[str
 		if !ok {
 			return make(map[string]time.Time), errors.New("end is required")
 		}
-		
+
 		start, err := time.Parse(time.DateOnly, startStr)
 		if err != nil {
 			return make(map[string]time.Time), err
@@ -93,7 +93,7 @@ func validateAndParseFindRequest(mode string, reqMap map[string]string) (map[str
 	}
 }
 
-func parseEventStruct (reqEvent structures.Event) (storage.Event, error) {
+func parseEventStruct(reqEvent structures.Event) (storage.Event, error) {
 	if err := validateEvent(reqEvent); err != nil {
 		return storage.Event{}, err
 	}
@@ -117,12 +117,12 @@ func parseEventStruct (reqEvent structures.Event) (storage.Event, error) {
 	}
 
 	event := storage.Event{
-		ID: reqEvent.ID,
-		Title: reqEvent.Title,
-		EventDate: eventDate,
-		DateSince: dateSince,
-		Descr: reqEvent.Descr,
-		UserID: reqEvent.UserID,
+		ID:         reqEvent.ID,
+		Title:      reqEvent.Title,
+		EventDate:  eventDate,
+		DateSince:  dateSince,
+		Descr:      reqEvent.Descr,
+		UserID:     reqEvent.UserID,
 		NotifyDate: notifyDate,
 	}
 

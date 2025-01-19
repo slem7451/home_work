@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server" //nolint:depguard
 )
 
 type Server struct {
 	http.Server
-	logger server.Logger
+	logger  server.Logger
 	handler *calendarHandler
 }
 
@@ -35,7 +35,7 @@ func NewServer(logger server.Logger, app server.Application, httpConf config.HTT
 			Handler:           loggingMiddleware(mux),
 			ReadHeaderTimeout: 5 * time.Second,
 		},
-		logger: logger,
+		logger:  logger,
 		handler: handler,
 	}
 }

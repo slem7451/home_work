@@ -40,6 +40,14 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(lrw, r)
 
 		logger.Printf("%s [%s] %s %s %s %d %s \"%s\"\n",
-			r.RemoteAddr, start.String(), r.Method, r.URL.String(), r.Proto, lrw.statusCode, time.Since(start).String(), r.UserAgent())
+			r.RemoteAddr,
+			start.String(),
+			r.Method,
+			r.URL.String(),
+			r.Proto,
+			lrw.statusCode,
+			time.Since(start).String(),
+			r.UserAgent(),
+		)
 	})
 }

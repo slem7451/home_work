@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/grpc/pb"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"         //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"         //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/grpc/pb" //nolint:depguard
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
