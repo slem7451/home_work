@@ -33,13 +33,11 @@ func NewScheduler(config config.RabbitConf, schedulerConf schedulerconfig.Schedu
 }
 
 func (s *Scheduler) Run(ctx context.Context) error {
-	err := s.rabbit.ExchangeDeclare(s.config.GetExchange())
-	if err != nil {
+	if err := s.rabbit.ExchangeDeclare(s.config.GetExchange()); err != nil {
 		return err
 	}
-
-	err = s.rabbit.QueueDeclare(s.config.GetQueue())
-	if err != nil {
+	
+	if err := s.rabbit.QueueDeclare(s.config.GetQueue()); err != nil {
 		return err
 	}
 
@@ -70,14 +68,12 @@ func (s *Scheduler) Run(ctx context.Context) error {
 				continue
 			}
 
-			err = s.sendNotifications(ctx, events)
-			if err != nil {
+			if err := s.sendNotifications(ctx, events); err != nil {
 				s.log.Error(err.Error())
 				continue
 			}
 		case <-removeTicker.C:
-			err := s.storage.RemoveOldEvents(ctx)
-			if err != nil {
+			if err := s.storage.RemoveOldEvents(ctx); err != nil {
 				s.log.Error(err.Error())
 				continue
 			}
@@ -93,9 +89,8 @@ func (s *Scheduler) sendNotifications(ctx context.Context, events []storage.Even
 		if err != nil {
 			return err
 		}
-
-		err = s.rabbit.Publish(s.config.GetExchange(), body)
-		if err != nil {
+		
+		if err := s.rabbit.Publish(s.config.GetExchange(), body); err != nil {
 			return err
 		}
 

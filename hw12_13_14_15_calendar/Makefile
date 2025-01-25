@@ -1,5 +1,6 @@
 BIN := "./bin/calendar"
 SCHDEULER := "./bin/calendar_scheduler"
+SENDER := "./bin/calendar_sender"
 DOCKER_IMG="calendar:develop"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
@@ -8,6 +9,7 @@ LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%d
 build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/calendar
 	go build -v -o $(BIN)_scheduler -ldflags "$(LDFLAGS)" ./cmd/calendar_scheduler
+	go build -v -o $(BIN)_sender -ldflags "$(LDFLAGS)" ./cmd/calendar_sender
 
 generate:
 	rm -rf internal/server/grpc/pb
@@ -22,6 +24,9 @@ run: build migrate
 
 scheduler-run: build
 	$(SCHDEULER) -config ./configs/scheduler_config.toml
+
+sender-run: build
+	$(SENDER) -config ./configs/sender_config.toml
 
 build-img:
 	docker build \
