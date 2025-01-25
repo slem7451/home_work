@@ -1,4 +1,4 @@
-package config
+package calendarconfig
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	configFile := "../../configs/config.toml"
+	configFile := "../../../configs/calendar_config.toml"
 	config := NewConfig(configFile)
 
 	require.Equal(t, "sql", config.Storage)

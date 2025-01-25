@@ -95,3 +95,42 @@ func (s *Storage) FindBetweenDates(_ context.Context, start time.Time, end time.
 
 	return res, nil
 }
+
+func (s *Storage) FindEventsForNotify(_ context.Context) ([]storage.Event, error) {
+	res := make([]storage.Event, 0)
+	var emptyTime time.Time
+
+	for _, v := range s.storage {
+		if v.IsSended {
+			continue
+		}
+
+		if v.NotifyDate == emptyTime {
+			if v.EventDate.Compare(time.Now()) > 0 {
+				res = append(res, v)
+			}
+		} else if v.NotifyDate.Compare(time.Now()) > 0 {
+			res = append(res, v)
+		}
+	}
+
+	return res, nil
+}
+
+func (s *Storage) RemoveOldEvents(_ context.Context) error {
+	for id, event := range s.storage {
+		if event.EventDate.Add(time.Hour * 24 * 365).Compare(time.Now()) < 0 && event.IsSended {
+			delete(s.storage, id)
+		}
+	}
+
+	return nil
+}
+
+func (s *Storage) MarkSendedEvent(_ context.Context, id int) error {
+	event := s.storage[id]
+	event.IsSended = true
+	s.storage[id] = event
+
+	return nil
+}

@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"                          //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"                       //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app" //nolint:depguard
+	calendarconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/calendar"
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                       //nolint:depguard
 	serverbuilder "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/builder" //nolint:depguard
 )
@@ -18,7 +18,7 @@ import (
 var configFile string
 
 func init() {
-	flag.StringVar(&configFile, "config", "configs/config.toml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "./configs/calendar_config.toml", "Path to configuration file")
 }
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 		return
 	}
 
-	config := config.NewConfig(configFile)
+	config := calendarconfig.NewConfig(configFile)
 	logg := logger.New(config.Logger.Level)
 
 	storage := app.NewStorage(config)

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"                       //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
 	storagelib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"           //nolint:depguard
 	memorystorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/memory" //nolint:depguard
 	sqlstorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/sql"       //nolint:depguard
@@ -37,12 +37,16 @@ type Storage interface {
 	FindForWeek(ctx context.Context, date time.Time) ([]storagelib.Event, error)
 	FindForMonth(ctx context.Context, date time.Time) ([]storagelib.Event, error)
 	FindBetweenDates(ctx context.Context, start time.Time, end time.Time) ([]storagelib.Event, error)
+
+	FindEventsForNotify(ctx context.Context) ([]storagelib.Event, error) 
+	RemoveOldEvents(ctx context.Context) error
+	MarkSendedEvent(ctx context.Context, id int) error
 }
 
 func NewStorage(config config.Config) Storage {
-	switch strings.ToLower(config.Storage) {
+	switch strings.ToLower(config.GetStorage()) {
 	case SQLStorage:
-		return sqlstorage.New(config.DB)
+		return sqlstorage.New(config.GetDB())
 	case InMemoryStorage:
 		return memorystorage.New()
 	default:

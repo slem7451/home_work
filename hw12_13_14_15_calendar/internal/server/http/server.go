@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
+	calendarconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/calendar"
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server" //nolint:depguard
 )
 
@@ -16,7 +16,7 @@ type Server struct {
 	handler *calendarHandler
 }
 
-func NewServer(logger server.Logger, app server.Application, httpConf config.HTTPConf) server.Server {
+func NewServer(logger server.Logger, app server.Application, httpConf calendarconfig.HTTPConf) server.Server {
 	handler := &calendarHandler{
 		app: app,
 	}

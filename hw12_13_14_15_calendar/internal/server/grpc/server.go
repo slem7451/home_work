@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"         //nolint:depguard
+	calendarconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/calendar"
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server"         //nolint:depguard
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/grpc/pb" //nolint:depguard
 	"google.golang.org/grpc"
@@ -15,10 +15,10 @@ import (
 type Server struct {
 	*grpc.Server
 	logger server.Logger
-	config config.GRPCConf
+	config calendarconfig.GRPCConf
 }
 
-func NewServer(logger server.Logger, app server.Application, grpcConf config.GRPCConf) server.Server {
+func NewServer(logger server.Logger, app server.Application, grpcConf calendarconfig.GRPCConf) server.Server {
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(loggingInterceptor()))
 	pb.RegisterEventServiceServer(grpcServer, &calendarService{app: app})
 	reflection.Register(grpcServer)

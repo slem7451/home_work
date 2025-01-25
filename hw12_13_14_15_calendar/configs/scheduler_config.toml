@@ -1,0 +1,23 @@
+storage = "sql"
+
+[logger]
+level = "INFO"
+
+[db]
+host = "localhost"
+port = 5432
+user = "root"
+password = "root"
+name = "app_db"
+
+[rabbit]
+host = "localhost"
+port = 5672
+user = "guest"
+password = "guest"
+exchange = "app"
+queue = "calendar"
+
+[scheduler]
+update = "5s"
+remove = "1m"

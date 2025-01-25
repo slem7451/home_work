@@ -2,12 +2,11 @@ package sqlstorage
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	_ "github.com/jackc/pgx/stdlib"                                         //nolint:depguard
-	"github.com/jmoiron/sqlx"                                               //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"  //nolint:depguard
+	_ "github.com/jackc/pgx/stdlib" //nolint:depguard
+	"github.com/jmoiron/sqlx"       //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage" //nolint:depguard
 )
 
@@ -17,8 +16,7 @@ type Storage struct {
 }
 
 func New(dbConf config.DBConf) *Storage {
-	db, err := sqlx.Open("pgx", fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
-		dbConf.User, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Name))
+	db, err := sqlx.Open("pgx", dbConf.DSN())
 	if err != nil {
 		panic(err)
 	}
@@ -134,4 +132,48 @@ func (s *Storage) FindBetweenDates(ctx context.Context, start time.Time, end tim
 	}
 
 	return events, nil
+}
+
+func (s *Storage) FindEventsForNotify(ctx context.Context) ([]storage.Event, error) {
+	var emptyTime time.Time
+
+	rows, err := s.db.QueryxContext(ctx, `select * from events where is_sended = false and ((event_date < now() and notify_date = $1) or (notify_date <> $1 and notify_date < now()))`, emptyTime)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	events := make([]storage.Event, 0)
+
+	for rows.Next() {
+		var e storage.Event
+
+		if err := rows.StructScan(&e); err != nil {
+			return make([]storage.Event, 0), err
+		}
+
+		events = append(events, e)
+	}
+
+	return events, nil
+}
+
+func (s *Storage) RemoveOldEvents(ctx context.Context) error {
+	query := `delete from events where is_sended = true and event_date < now() - interval '1 year'`
+
+	if _, err := s.db.ExecContext(ctx, query); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Storage) MarkSendedEvent(ctx context.Context, id int) error {
+	query := `update events set is_sended = true where id = $1`
+
+	if _, err := s.db.ExecContext(ctx, query, id); err != nil {
+		return err
+	}
+
+	return nil
 }
