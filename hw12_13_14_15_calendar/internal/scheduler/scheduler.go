@@ -6,29 +6,35 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
-	schedulerconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/scheduler"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"                              //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"                           //nolint:depguard
+	schedulerconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/scheduler" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                           //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq"                         //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"                          //nolint:depguard
 )
 
 type Scheduler struct {
-	config          config.RabbitConf
+	config        config.RabbitConf
 	schedulerConf schedulerconfig.SchedulerConf
-	rabbit *rabbitmq.RabbitClient
-	storage      app.Storage
-	log          *logger.Logger
+	rabbit        *rabbitmq.RabbitClient
+	storage       app.Storage
+	log           *logger.Logger
 }
 
-func NewScheduler(config config.RabbitConf, schedulerConf schedulerconfig.SchedulerConf,  rabbit *rabbitmq.RabbitClient, storage app.Storage, log *logger.Logger) *Scheduler {
+func NewScheduler(
+	config config.RabbitConf,
+	schedulerConf schedulerconfig.SchedulerConf,
+	rabbit *rabbitmq.RabbitClient,
+	storage app.Storage,
+	log *logger.Logger,
+) *Scheduler {
 	return &Scheduler{
-		config:       config,
+		config:        config,
 		schedulerConf: schedulerConf,
-		rabbit: rabbit,
-		storage:      storage,
-		log:          log,
+		rabbit:        rabbit,
+		storage:       storage,
+		log:           log,
 	}
 }
 
@@ -36,7 +42,7 @@ func (s *Scheduler) Run(ctx context.Context) error {
 	if err := s.rabbit.ExchangeDeclare(s.config.GetExchange()); err != nil {
 		return err
 	}
-	
+
 	if err := s.rabbit.QueueDeclare(s.config.GetQueue()); err != nil {
 		return err
 	}
@@ -89,7 +95,7 @@ func (s *Scheduler) sendNotifications(ctx context.Context, notifications []stora
 		if err != nil {
 			return err
 		}
-		
+
 		if err := s.rabbit.Publish(s.config.GetExchange(), body); err != nil {
 			return err
 		}

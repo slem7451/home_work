@@ -119,7 +119,7 @@ func (s *Storage) FindEventsForNotify(_ context.Context) ([]storage.Notification
 
 func (s *Storage) RemoveOldEvents(_ context.Context) error {
 	for id, event := range s.storage {
-		if event.EventDate.Add(time.Hour * 24 * 365).Compare(time.Now()) < 0 && event.IsSended {
+		if event.EventDate.Add(time.Hour*24*365).Compare(time.Now()) < 0 && event.IsSended {
 			delete(s.storage, id)
 		}
 	}

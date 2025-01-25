@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"                       //nolint:depguard
 	storagelib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"           //nolint:depguard
 	memorystorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/memory" //nolint:depguard
 	sqlstorage "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage/sql"       //nolint:depguard
@@ -38,7 +38,7 @@ type Storage interface {
 	FindForMonth(ctx context.Context, date time.Time) ([]storagelib.Event, error)
 	FindBetweenDates(ctx context.Context, start time.Time, end time.Time) ([]storagelib.Event, error)
 
-	FindEventsForNotify(ctx context.Context) ([]storagelib.Notification, error) 
+	FindEventsForNotify(ctx context.Context) ([]storagelib.Notification, error)
 	RemoveOldEvents(ctx context.Context) error
 	MarkSendedEvent(ctx context.Context, id int) error
 }

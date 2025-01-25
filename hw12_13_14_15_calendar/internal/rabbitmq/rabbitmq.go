@@ -1,9 +1,9 @@
 package rabbitmq
 
 import (
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"
-	"github.com/streadway/amqp"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger" //nolint:depguard
+	"github.com/streadway/amqp"                                            //nolint:depguard
 )
 
 type RabbitClient struct {
@@ -15,12 +15,12 @@ type RabbitClient struct {
 }
 
 type Config struct {
-	Port int
-	Host string
-	User string
+	Port     int
+	Host     string
+	User     string
 	Password string
 	Exchange string
-	Queue string
+	Queue    string
 }
 
 func New(config config.RabbitConf, log *logger.Logger) *RabbitClient {

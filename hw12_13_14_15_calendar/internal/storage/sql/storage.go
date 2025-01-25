@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	_ "github.com/jackc/pgx/stdlib" //nolint:depguard
-	"github.com/jmoiron/sqlx"       //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
+	_ "github.com/jackc/pgx/stdlib"                                         //nolint:depguard
+	"github.com/jmoiron/sqlx"                                               //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"  //nolint:depguard
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage" //nolint:depguard
 )
 
@@ -137,7 +137,11 @@ func (s *Storage) FindBetweenDates(ctx context.Context, start time.Time, end tim
 func (s *Storage) FindEventsForNotify(ctx context.Context) ([]storage.Notification, error) {
 	var emptyTime time.Time
 
-	rows, err := s.db.QueryxContext(ctx, `select id, title, event_date, user_id from events where is_sended = false and ((event_date < now() and notify_date = $1) or (notify_date <> $1 and notify_date < now()))`, emptyTime)
+	rows, err := s.db.QueryxContext(ctx,
+		`select id, title, event_date, user_id from events 
+		where is_sended = false 
+		and ((event_date < now() and notify_date = $1) or (notify_date <> $1 and notify_date < now()))`,
+		emptyTime)
 	if err != nil {
 		return nil, err
 	}

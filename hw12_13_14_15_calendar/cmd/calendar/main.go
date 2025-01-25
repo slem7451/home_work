@@ -9,10 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app" //nolint:depguard
-	calendarconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/calendar"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                       //nolint:depguard
-	serverbuilder "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/builder" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"                            //nolint:depguard
+	calendarconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/calendar" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                         //nolint:depguard
+	serverbuilder "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server/builder"   //nolint:depguard
 )
 
 var configFile string

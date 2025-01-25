@@ -4,24 +4,24 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"
-	"github.com/streadway/amqp"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"   //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"   //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage"  //nolint:depguard
+	"github.com/streadway/amqp"                                              //nolint:depguard
 )
 
 type Sender struct {
-	config          config.RabbitConf
+	config config.RabbitConf
 	rabbit *rabbitmq.RabbitClient
-	log          *logger.Logger
+	log    *logger.Logger
 }
 
 func NewSender(config config.RabbitConf, rabbit *rabbitmq.RabbitClient, logg *logger.Logger) *Sender {
 	return &Sender{
 		config: config,
 		rabbit: rabbit,
-		log: logg,
+		log:    logg,
 	}
 }
 
@@ -60,7 +60,7 @@ func (s *Sender) Run() error {
 
 func (s *Sender) processMessage(msg amqp.Delivery) error {
 	var notification storage.Notification
-	
+
 	if err := json.Unmarshal(msg.Body, &notification); err != nil {
 		return err
 	}

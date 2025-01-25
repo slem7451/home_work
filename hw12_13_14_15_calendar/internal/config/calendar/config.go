@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/BurntSushi/toml" //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"
+	"github.com/BurntSushi/toml"                                           //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
 )
 
 type Config struct {
@@ -52,14 +52,14 @@ func NewConfig(configFile string) Config {
 	return conf
 }
 
-func (c Config)GetStorage() string {
+func (c Config) GetStorage() string {
 	return c.Storage
 }
 
-func (c Config)GetDB() config.DBConf {
+func (c Config) GetDB() config.DBConf {
 	return c.DB
 }
 
-func (db DBConf)DSN() string {
+func (db DBConf) DSN() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s", db.User, db.Password, db.Host, db.Port, db.Name)
 }

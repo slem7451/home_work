@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 
-	senderconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/sender"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq"
-	senderlib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/sender"
+	senderconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/sender" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                     //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq"                   //nolint:depguard
+	senderlib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/sender"           //nolint:depguard
 )
 
 var configFile string

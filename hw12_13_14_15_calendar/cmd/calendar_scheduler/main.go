@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"
-	schedulerconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/scheduler"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq"
-	schedulerlib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/scheduler"
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/app"                              //nolint:depguard
+	schedulerconfig "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config/scheduler" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/logger"                           //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/rabbitmq"                         //nolint:depguard
+	schedulerlib "github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/scheduler"           //nolint:depguard
 )
 
 var configFile string
@@ -36,7 +36,7 @@ func main() {
 	defer rabbit.Close()
 
 	scheduler := schedulerlib.NewScheduler(config.Rabbit, config.Scheduler, rabbit, storage, logg)
-	
+
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
