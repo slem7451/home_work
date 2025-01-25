@@ -22,4 +22,7 @@ func TestConfig(t *testing.T) {
 
 	require.Equal(t, "localhost", config.HTTP.Host)
 	require.Equal(t, 8080, config.HTTP.Port)
+
+	require.Equal(t, "localhost", config.GRPC.Host)
+	require.Equal(t, 7070, config.GRPC.Port)
 }

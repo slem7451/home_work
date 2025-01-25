@@ -26,7 +26,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		panic(err)
 	}
 
-	logFile, err := os.OpenFile("logs/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
+	logFile, err := os.OpenFile("logs/http_app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,15 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(lrw, r)
 
-		logger.Printf("%s [%s] %s %s %s %d %d \"%s\"\n",
-			r.RemoteAddr, start.String(), r.Method, r.URL.String(), r.Proto, lrw.statusCode, time.Since(start), r.UserAgent())
+		logger.Printf("%s [%s] %s %s %s %d %s \"%s\"\n",
+			r.RemoteAddr,
+			start.String(),
+			r.Method,
+			r.URL.String(),
+			r.Proto,
+			lrw.statusCode,
+			time.Since(start).String(),
+			r.UserAgent(),
+		)
 	})
 }

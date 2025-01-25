@@ -7,35 +7,27 @@ import (
 	"time"
 
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/server" //nolint:depguard
 )
 
 type Server struct {
 	http.Server
-	logger Logger
+	logger  server.Logger
+	handler *calendarHandler
 }
 
-type Logger interface {
-	Error(msg string)
-	Warn(msg string)
-	Info(msg string)
-	Debug(msg string)
-}
-
-type Application interface { // TODO
-}
-
-type calendarHandler struct{}
-
-func (h *calendarHandler) hello(w http.ResponseWriter, _ *http.Request) {
-	w.Write([]byte("hello, world"))
-}
-
-func NewServer(logger Logger, _ Application, httpConf config.HTTPConf) *Server {
-	handler := &calendarHandler{}
+func NewServer(logger server.Logger, app server.Application, httpConf config.HTTPConf) server.Server {
+	handler := &calendarHandler{
+		app: app,
+	}
 	mux := http.NewServeMux()
 	addr := fmt.Sprintf("%s:%d", httpConf.Host, httpConf.Port)
 
 	mux.HandleFunc("/hello", handler.hello)
+	mux.HandleFunc("POST /event", handler.create)
+	mux.HandleFunc("PUT /event/{id}", handler.update)
+	mux.HandleFunc("DELETE /event/{id}", handler.delete)
+	mux.HandleFunc("GET /event/{mode}", handler.find)
 
 	return &Server{
 		Server: http.Server{
@@ -43,14 +35,20 @@ func NewServer(logger Logger, _ Application, httpConf config.HTTPConf) *Server {
 			Handler:           loggingMiddleware(mux),
 			ReadHeaderTimeout: 5 * time.Second,
 		},
-		logger: logger,
+		logger:  logger,
+		handler: handler,
 	}
 }
 
-func (s *Server) Start(_ context.Context) error {
+func (s *Server) Start(ctx context.Context) error {
+	s.handler.ctx = ctx
 	return s.Server.ListenAndServe()
 }
 
 func (s *Server) Stop(ctx context.Context) error {
 	return s.Server.Shutdown(ctx)
+}
+
+func (s *Server) Whoami() string {
+	return "HTTP"
 }
