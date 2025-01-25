@@ -59,13 +59,13 @@ func (s *Sender) Run() error {
 }
 
 func (s *Sender) processMessage(msg amqp.Delivery) error {
-	var event storage.Event
+	var notification storage.Notification
 	
-	if err := json.Unmarshal(msg.Body, &event); err != nil {
+	if err := json.Unmarshal(msg.Body, &notification); err != nil {
 		return err
 	}
 
-	s.log.Info(fmt.Sprintf("event is sended: %v", event))
+	s.log.Info(fmt.Sprintf("notification of event is sended: %v", notification))
 
 	return nil
 }

@@ -134,28 +134,28 @@ func (s *Storage) FindBetweenDates(ctx context.Context, start time.Time, end tim
 	return events, nil
 }
 
-func (s *Storage) FindEventsForNotify(ctx context.Context) ([]storage.Event, error) {
+func (s *Storage) FindEventsForNotify(ctx context.Context) ([]storage.Notification, error) {
 	var emptyTime time.Time
 
-	rows, err := s.db.QueryxContext(ctx, `select * from events where is_sended = false and ((event_date < now() and notify_date = $1) or (notify_date <> $1 and notify_date < now()))`, emptyTime)
+	rows, err := s.db.QueryxContext(ctx, `select id, title, event_date, user_id from events where is_sended = false and ((event_date < now() and notify_date = $1) or (notify_date <> $1 and notify_date < now()))`, emptyTime)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	events := make([]storage.Event, 0)
+	notifications := make([]storage.Notification, 0)
 
 	for rows.Next() {
-		var e storage.Event
+		var n storage.Notification
 
-		if err := rows.StructScan(&e); err != nil {
-			return make([]storage.Event, 0), err
+		if err := rows.StructScan(&n); err != nil {
+			return make([]storage.Notification, 0), err
 		}
 
-		events = append(events, e)
+		notifications = append(notifications, n)
 	}
 
-	return events, nil
+	return notifications, nil
 }
 
 func (s *Storage) RemoveOldEvents(ctx context.Context) error {

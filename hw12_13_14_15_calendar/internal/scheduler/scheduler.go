@@ -62,13 +62,13 @@ func (s *Scheduler) Run(ctx context.Context) error {
 	for {
 		select {
 		case <-notifyTicker.C:
-			events, err := s.storage.FindEventsForNotify(ctx)
+			notifications, err := s.storage.FindEventsForNotify(ctx)
 			if err != nil {
 				s.log.Error(err.Error())
 				continue
 			}
 
-			if err := s.sendNotifications(ctx, events); err != nil {
+			if err := s.sendNotifications(ctx, notifications); err != nil {
 				s.log.Error(err.Error())
 				continue
 			}
@@ -83,9 +83,9 @@ func (s *Scheduler) Run(ctx context.Context) error {
 	}
 }
 
-func (s *Scheduler) sendNotifications(ctx context.Context, events []storage.Event) error {
-	for _, event := range events {
-		body, err := json.Marshal(event)
+func (s *Scheduler) sendNotifications(ctx context.Context, notifications []storage.Notification) error {
+	for _, notification := range notifications {
+		body, err := json.Marshal(notification)
 		if err != nil {
 			return err
 		}
@@ -94,9 +94,9 @@ func (s *Scheduler) sendNotifications(ctx context.Context, events []storage.Even
 			return err
 		}
 
-		s.log.Info(fmt.Sprintf("event %d is in scheduler now", event.ID))
+		s.log.Info(fmt.Sprintf("notification of event %d is in scheduler now", notification.ID))
 
-		s.storage.MarkSendedEvent(ctx, event.ID)
+		s.storage.MarkSendedEvent(ctx, notification.ID)
 	}
 
 	return nil

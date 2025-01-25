@@ -96,8 +96,8 @@ func (s *Storage) FindBetweenDates(_ context.Context, start time.Time, end time.
 	return res, nil
 }
 
-func (s *Storage) FindEventsForNotify(_ context.Context) ([]storage.Event, error) {
-	res := make([]storage.Event, 0)
+func (s *Storage) FindEventsForNotify(_ context.Context) ([]storage.Notification, error) {
+	res := make([]storage.Notification, 0)
 	var emptyTime time.Time
 
 	for _, v := range s.storage {
@@ -107,10 +107,10 @@ func (s *Storage) FindEventsForNotify(_ context.Context) ([]storage.Event, error
 
 		if v.NotifyDate == emptyTime {
 			if v.EventDate.Compare(time.Now()) > 0 {
-				res = append(res, v)
+				res = append(res, storage.Notification{ID: v.ID, EventDate: v.EventDate, Title: v.Title, UserID: v.UserID})
 			}
 		} else if v.NotifyDate.Compare(time.Now()) > 0 {
-			res = append(res, v)
+			res = append(res, storage.Notification{ID: v.ID, EventDate: v.EventDate, Title: v.Title, UserID: v.UserID})
 		}
 	}
 

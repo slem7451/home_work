@@ -38,7 +38,7 @@ type Storage interface {
 	FindForMonth(ctx context.Context, date time.Time) ([]storagelib.Event, error)
 	FindBetweenDates(ctx context.Context, start time.Time, end time.Time) ([]storagelib.Event, error)
 
-	FindEventsForNotify(ctx context.Context) ([]storagelib.Event, error) 
+	FindEventsForNotify(ctx context.Context) ([]storagelib.Notification, error) 
 	RemoveOldEvents(ctx context.Context) error
 	MarkSendedEvent(ctx context.Context, id int) error
 }
