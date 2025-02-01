@@ -1,4 +1,4 @@
-package config
+package senderconfig
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	configFile := "../../configs/config.toml"
+	configFile := "../../../configs/sender_config.toml"
 	config := NewConfig(configFile)
 
 	require.Equal(t, "sql", config.Storage)
@@ -20,9 +20,10 @@ func TestConfig(t *testing.T) {
 	require.Equal(t, "root", config.DB.Password)
 	require.Equal(t, "app_db", config.DB.Name)
 
-	require.Equal(t, "localhost", config.HTTP.Host)
-	require.Equal(t, 8080, config.HTTP.Port)
-
-	require.Equal(t, "localhost", config.GRPC.Host)
-	require.Equal(t, 7070, config.GRPC.Port)
+	require.Equal(t, "localhost", config.Rabbit.Host)
+	require.Equal(t, 5672, config.Rabbit.Port)
+	require.Equal(t, "guest", config.Rabbit.User)
+	require.Equal(t, "guest", config.Rabbit.Password)
+	require.Equal(t, "app", config.Rabbit.Exchange)
+	require.Equal(t, "calendar", config.Rabbit.Queue)
 }
