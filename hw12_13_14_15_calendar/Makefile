@@ -4,6 +4,7 @@ SENDER := "./bin/calendar_sender"
 DOCKER_CALENDAR_IMG="calendar"
 DOCKER_SCHEDULER_IMG="scheduler"
 DOCKER_SENDER_IMG="sender"
+DOCKER_TESTS_IMG="integration-tests"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
 LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
@@ -45,6 +46,11 @@ build-img:
 		--build-arg=LDFLAGS="$(LDFLAGS)" \
 		-t $(DOCKER_SENDER_IMG) \
 		-f build/sender/Dockerfile .
+	
+	docker build \
+		--build-arg=LDFLAGS="$(LDFLAGS)" \
+		-t $(DOCKER_TESTS_IMG) \
+		-f build/tests/Dockerfile .
 
 run-img: build-img
 	docker run -d $(DOCKER_CALENDAR_IMG)
@@ -62,6 +68,10 @@ version: build
 
 test:
 	go test -v -race ./internal/...
+
+integration-tests:
+	docker-compose -f deployments/docker-compose.test.yaml up --build --abort-on-container-exit --exit-code-from integration-tests
+	docker-compose -f deployments/docker-compose.test.yaml down	
 
 install-lint-deps:
 	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.62.0

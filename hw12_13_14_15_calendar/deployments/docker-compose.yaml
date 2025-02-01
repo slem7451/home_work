@@ -19,7 +19,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      interval: 3s
+      interval: 5s
       timeout: 30s
       retries: 3
 

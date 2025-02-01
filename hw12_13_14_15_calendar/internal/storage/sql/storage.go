@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	_ "github.com/jackc/pgx/stdlib" //nolint:depguard
-	"github.com/jmoiron/sqlx"       //nolint:depguard
-	"github.com/pressly/goose/v3" //nolint:depguard
+	_ "github.com/jackc/pgx/stdlib"                                         //nolint:depguard
+	"github.com/jmoiron/sqlx"                                               //nolint:depguard
+	"github.com/pressly/goose/v3"                                           //nolint:depguard
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"  //nolint:depguard
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage" //nolint:depguard
-	"github.com/slem7451/home_work/hw12_13_14_15_calendar/migrations" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/migrations"       //nolint:depguard
 )
 
 type Storage struct {
