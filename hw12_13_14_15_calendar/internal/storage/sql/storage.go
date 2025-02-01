@@ -24,7 +24,7 @@ func New(dbConf config.DBConf) *Storage {
 	}
 
 	goose.SetBaseFS(migrations.EmbedMigrations)
-	
+
 	if err := goose.SetDialect("postgres"); err != nil {
 		panic(err)
 	}
