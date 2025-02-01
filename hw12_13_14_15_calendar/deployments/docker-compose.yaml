@@ -6,15 +6,44 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "root"
-      POSTGRES_DB: "app_db"
-      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
 
   rabbitmq:
     image: rabbitmq:management
-    container_name: rabbitmq
     ports:
       - "5672:5672"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 3s
+      timeout: 30s
+      retries: 3
+
+  calendar:
+    image: calendar
+    ports:
+      - "8080:8080"
+      - "7070:7070"
+    depends_on:
+      postgres:
+        condition: service_started
+
+  scheduler:
+    image: scheduler
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
+  sender:
+    image: sender
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy

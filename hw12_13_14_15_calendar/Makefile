@@ -1,7 +1,9 @@
 BIN := "./bin/calendar"
 SCHDEULER := "./bin/calendar_scheduler"
 SENDER := "./bin/calendar_sender"
-DOCKER_IMG="calendar:develop"
+DOCKER_CALENDAR_IMG="calendar"
+DOCKER_SCHEDULER_IMG="scheduler"
+DOCKER_SENDER_IMG="sender"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
 LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
@@ -19,7 +21,7 @@ generate:
 migrate:
 	goose -env configs/.db.env up
 
-run: build migrate
+run: build
 	$(BIN) -config ./configs/calendar_config.toml
 
 scheduler-run: build
@@ -31,11 +33,29 @@ sender-run: build
 build-img:
 	docker build \
 		--build-arg=LDFLAGS="$(LDFLAGS)" \
-		-t $(DOCKER_IMG) \
-		-f build/Dockerfile .
+		-t $(DOCKER_CALENDAR_IMG) \
+		-f build/calendar/Dockerfile .
+
+	docker build \
+		--build-arg=LDFLAGS="$(LDFLAGS)" \
+		-t $(DOCKER_SCHEDULER_IMG) \
+		-f build/scheduler/Dockerfile .
+
+	docker build \
+		--build-arg=LDFLAGS="$(LDFLAGS)" \
+		-t $(DOCKER_SENDER_IMG) \
+		-f build/sender/Dockerfile .
 
 run-img: build-img
-	docker run $(DOCKER_IMG)
+	docker run -d $(DOCKER_CALENDAR_IMG)
+	docker run -d $(DOCKER_SCHEDULER_IMG)
+	docker run -d $(DOCKER_SENDER_IMG)
+
+up:
+	docker-compose -f deployments/docker-compose.yaml up
+
+down:
+	docker-compose -f deployments/docker-compose.yaml down
 
 version: build
 	$(BIN) version
