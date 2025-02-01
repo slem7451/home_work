@@ -4,15 +4,15 @@ storage = "sql"
 level = "INFO"
 
 [http]
-host = "localhost"
+host = "0.0.0.0"
 port = 8080
 
 [grpc]
-host = "localhost"
+host = "0.0.0.0"
 port = 7070
 
 [db]
-host = "localhost"
+host = "postgres"
 port = 5432
 user = "root"
 password = "root"
