@@ -1,0 +1,24 @@
+postgres:
+  replicaCount: 1
+  database: app_db
+  username: root
+  port: 5432
+  password: root
+
+rabbitmq:
+  replicaCount: 1
+  username: guest
+  password: guest
+  port: 5672
+
+calendar:
+  replicaCount: 1
+  image: "slem7451/calendar"
+
+scheduler:
+  replicaCount: 1
+  image: "slem7451/scheduler"
+
+sender:
+  replicaCount: 1
+  image: "slem7451/sender"

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: calendar
+description: Helm chart for calendar Kubernetes
+
+type: application
+
+version: 1.0.0
