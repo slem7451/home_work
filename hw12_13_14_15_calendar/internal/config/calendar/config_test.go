@@ -14,15 +14,15 @@ func TestConfig(t *testing.T) {
 
 	require.Equal(t, "INFO", config.Logger.Level)
 
-	require.Equal(t, "localhost", config.DB.Host)
+	require.Equal(t, "postgres", config.DB.Host)
 	require.Equal(t, 5432, config.DB.Port)
 	require.Equal(t, "root", config.DB.User)
 	require.Equal(t, "root", config.DB.Password)
 	require.Equal(t, "app_db", config.DB.Name)
 
-	require.Equal(t, "localhost", config.HTTP.Host)
+	require.Equal(t, "0.0.0.0", config.HTTP.Host)
 	require.Equal(t, 8080, config.HTTP.Port)
 
-	require.Equal(t, "localhost", config.GRPC.Host)
+	require.Equal(t, "0.0.0.0", config.GRPC.Host)
 	require.Equal(t, 7070, config.GRPC.Port)
 }

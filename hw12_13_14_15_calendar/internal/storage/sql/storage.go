@@ -6,8 +6,10 @@ import (
 
 	_ "github.com/jackc/pgx/stdlib"                                         //nolint:depguard
 	"github.com/jmoiron/sqlx"                                               //nolint:depguard
+	"github.com/pressly/goose/v3"                                           //nolint:depguard
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/config"  //nolint:depguard
 	"github.com/slem7451/home_work/hw12_13_14_15_calendar/internal/storage" //nolint:depguard
+	"github.com/slem7451/home_work/hw12_13_14_15_calendar/migrations"       //nolint:depguard
 )
 
 type Storage struct {
@@ -18,6 +20,16 @@ type Storage struct {
 func New(dbConf config.DBConf) *Storage {
 	db, err := sqlx.Open("pgx", dbConf.DSN())
 	if err != nil {
+		panic(err)
+	}
+
+	goose.SetBaseFS(migrations.EmbedMigrations)
+
+	if err := goose.SetDialect("postgres"); err != nil {
+		panic(err)
+	}
+
+	if err := goose.Up(db.DB, "."); err != nil {
 		panic(err)
 	}
 

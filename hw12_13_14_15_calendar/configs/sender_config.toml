@@ -4,14 +4,14 @@ storage = "sql"
 level = "INFO"
 
 [db]
-host = "localhost"
+host = "postgres"
 port = 5432
 user = "root"
 password = "root"
 name = "app_db"
 
 [rabbit]
-host = "localhost"
+host = "rabbitmq"
 port = 5672
 user = "guest"
 password = "guest"
